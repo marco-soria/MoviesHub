@@ -98,20 +98,24 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
             }
 
             // Check if genre is used by any movies
-            var isUsed = await _db.MovieGenres.AnyAsync(mg => mg.GenreId == id);
-            if (isUsed)
-            {
-                // Soft delete since it's being used
-                genre.IsDeleted = true;
-                genre.DeletedAt = DateTime.UtcNow;
-                await _db.SaveChangesAsync();
-                return NoContent();
-            }
-
-            // Hard delete if not used
-            _db.Genres.Remove(genre);
+            //var isUsed = await _db.MovieGenres.AnyAsync(mg => mg.GenreId == id);
+            //if (isUsed)
+            //{
+            //    // Soft delete since it's being used
+            //    genre.IsDeleted = true;
+            //    genre.DeletedAt = DateTime.UtcNow;
+            //    await _db.SaveChangesAsync();
+            //    return NoContent();
+            //}
+            genre.IsDeleted = true;
+            genre.DeletedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
             return NoContent();
+
+            // Hard delete if not used
+            //_db.Genres.Remove(genre);
+            //await _db.SaveChangesAsync();
+            //return NoContent();
         }
 
         // Additional endpoint to restore a soft-deleted genre
