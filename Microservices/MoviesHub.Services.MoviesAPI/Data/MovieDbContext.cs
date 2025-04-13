@@ -44,6 +44,9 @@ namespace MoviesHub.Services.MoviesAPI.Data
             // Soft Delete en Genre
             modelBuilder.Entity<Genre>().HasQueryFilter(g => !g.IsDeleted);
 
+            modelBuilder.Entity<MovieGenre>().HasQueryFilter(mg =>
+    !mg.Genre.IsDeleted && !mg.Movie.IsDeleted);
+
             // Relación muchos a muchos
             modelBuilder.Entity<MovieGenre>()
                 .HasKey(mg => new { mg.MovieId, mg.GenreId });
