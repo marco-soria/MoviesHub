@@ -1,0 +1,82 @@
+﻿@model MoviesHub.Web.Models.MovieDto
+
+@{
+    ViewData["Title"] = "Movie Details";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-md-10 offset-md-1">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h2 class="text-center">Movie Details</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img src="@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Title">
+                            }
+                            else
+                            {
+                                <div class="bg-light d-flex justify-content-center align-items-center" style="height: 300px;">
+                                    <span class="text-muted">No Image</span>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <h3 class="mb-3">@Model.Title</h3>
+                            <dl class="row">
+                                <dt class="col-sm-3">Release Year</dt>
+                                <dd class="col-sm-9">@Model.ReleaseYear</dd>
+
+                                <dt class="col-sm-3">Rating</dt>
+                                <dd class="col-sm-9">
+                                    <span class="badge bg-warning">@Model.AverageRating</span>
+                                </dd>
+
+                                <dt class="col-sm-3">Genres</dt>
+                                <dd class="col-sm-9">
+                                    @if (Model.GenreNames != null && Model.GenreNames.Any())
+                                    {
+                                        @foreach (var genre in Model.GenreNames)
+                                        {
+                                            <span class="badge bg-primary me-1">@genre</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>No genres assigned</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-3">Created At</dt>
+                                <dd class="col-sm-9">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+                            </dl>
+
+                            <div class="mb-3">
+                                <h5>Description</h5>
+                                <p>@Model.Description</p>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-3">
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Back to List
+                                </a>
+                                <div>
+                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary mx-1">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger mx-1">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

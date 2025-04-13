@@ -1,0 +1,63 @@
+﻿@model IEnumerable<MovieDto>
+@{
+    ViewData["Title"] = "Movies by Genre";
+    var genreName = ViewBag.GenreName;
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Movies in @genreName Genre</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Movie" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> &nbsp; Add New Movie
+            </a>
+        </div>
+    </div>
+    <br />
+
+    @if (Model.Any())
+    {
+        <table class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Release Year</th>
+                    <th>Rating</th>
+                    <th>Genres</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var movie in Model)
+                {
+                    <tr>
+                        <td>@movie.Title</td>
+                        <td>@movie.ReleaseYear</td>
+                        <td>@movie.AverageRating</td>
+                        <td>@string.Join(", ", movie.GenreNames)</td>
+                        <td>
+                            <div class="w-75 btn-group" role="group">
+                                <a asp-controller="Movie" asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-primary mx-2">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <a asp-controller="Movie" asp-action="Details" asp-route-id="@movie.Id" class="btn btn-secondary mx-2">
+                                    <i class="bi bi-info-circle"></i> Details
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No movies found for this genre.</p>
+    }
+
+    <div class="mt-3">
+        <a asp-controller="Genre" asp-action="Index" class="btn btn-secondary">Back to Genres</a>
+    </div>
+</div>

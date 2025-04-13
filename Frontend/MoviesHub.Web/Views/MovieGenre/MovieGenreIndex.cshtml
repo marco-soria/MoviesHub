@@ -1,0 +1,57 @@
+﻿@model IEnumerable<MoviesHub.Web.Models.MovieGenreDto>
+
+@{
+    ViewData["Title"] = "Movie-Genre Associations";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Movie-Genre Associations</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="MovieGenre" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> &nbsp; Create New Association
+            </a>
+        </div>
+    </div>
+    <br />
+
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Movie</th>
+                <th>Genre</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var association in Model)
+                {
+                    <tr>
+                        <td>@association.MovieTitle</td>
+                        <td>@association.GenreName</td>
+                        <td>
+                            <div class="w-100 btn-group" role="group">
+                                <a asp-controller="MovieGenre" asp-action="Delete"
+                                   asp-route-movieId="@association.MovieId"
+                                   asp-route-genreId="@association.GenreId"
+                                   class="btn btn-danger mx-1">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" class="text-center">No movie-genre associations found</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

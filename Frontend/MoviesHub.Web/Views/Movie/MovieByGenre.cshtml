@@ -1,0 +1,62 @@
+﻿@model IEnumerable<MoviesHub.Web.Models.MovieDto>
+
+@{
+    ViewData["Title"] = $"Movies in {ViewBag.GenreName} Genre";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Movies in Genre: @ViewBag.GenreName</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Genre" asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> &nbsp; Back to Genres
+            </a>
+        </div>
+    </div>
+    <br />
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            @foreach (var movie in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrEmpty(movie.ImageUrl))
+                        {
+                            <img src="@movie.ImageUrl" class="card-img-top" alt="@movie.Title" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-light d-flex justify-content-center align-items-center" style="height: 200px;">
+                                <span class="text-muted">No Image</span>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@movie.Title</h5>
+                            <p class="card-text"><small class="text-muted">Release Year: @movie.ReleaseYear</small></p>
+                            <p class="card-text">
+                                <span class="badge bg-warning">Rating: @movie.AverageRating</span>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="btn-group w-100" role="group">
+                                <a asp-controller="Movie" asp-action="Details" asp-route-id="@movie.Id" class="btn btn-info">
+                                    <i class="bi bi-info-circle"></i> Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No movies found for this genre.
+        </div>
+    }
+</div>

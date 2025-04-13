@@ -1,0 +1,36 @@
+﻿@model MoviesHub.Web.Models.MovieGenreDto
+
+@{
+    ViewData["Title"] = "Delete Movie-Genre Association";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="text-center">Delete Movie-Genre Association</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h3>Are you sure you want to delete this association?</h3>
+                    </div>
+                    <dl class="row">
+                        <dt class="col-sm-3">Movie</dt>
+                        <dd class="col-sm-9">@Model.MovieTitle</dd>
+                        <dt class="col-sm-3">Genre</dt>
+                        <dd class="col-sm-9">@Model.GenreName</dd>
+                    </dl>
+                    <form asp-action="DeleteConfirmed" method="post">
+                        <input type="hidden" name="movieId" value="@Model.MovieId" />
+                        <input type="hidden" name="genreId" value="@Model.GenreId" />
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+﻿@model GenreDto
+@{
+    ViewData["Title"] = "Restore Genre";
+}
+
+<form method="post" class="mt-4">
+    <input asp-for="Id" hidden />
+
+    <div class="row pb-2">
+        <h2 class="text-primary">Restore Genre</h2>
+        <hr />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input asp-for="Name" disabled class="form-control" />
+    </div>
+
+    <div class="alert alert-info">
+        <strong>Are you sure you want to restore this genre?</strong>
+        <p>This will make the genre available again in the system.</p>
+    </div>
+
+    <button type="submit" class="btn btn-success" style="width:150px">Restore</button>
+    <a asp-controller="Genre" asp-action="Index" class="btn btn-secondary" style="width:150px">
+        Back to List
+    </a>
+</form>

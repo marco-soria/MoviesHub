@@ -1,0 +1,45 @@
+﻿@model MovieDto
+@{
+    ViewData["Title"] = "Restore Movie";
+}
+
+<form method="post" class="mt-4">
+    <input asp-for="Id" hidden />
+
+    <div class="row pb-2">
+        <h2 class="text-primary">Restore Movie</h2>
+        <hr />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input asp-for="Title" disabled class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Release Year</label>
+        <input asp-for="ReleaseYear" disabled class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea asp-for="Description" disabled class="form-control" rows="4"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Genres</label>
+        <div>
+            @string.Join(", ", Model.GenreNames)
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <strong>Are you sure you want to restore this movie?</strong>
+        <p>This will make the movie available again in the system.</p>
+    </div>
+
+    <button type="submit" class="btn btn-success" style="width:150px">Restore</button>
+    <a asp-controller="Movie" asp-action="Index" class="btn btn-secondary" style="width:150px">
+        Back to List
+    </a>
+</form>

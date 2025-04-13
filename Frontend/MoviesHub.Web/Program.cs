@@ -1,7 +1,41 @@
+using MoviesHub.Web.Service.IService;
+using MoviesHub.Web.Service;
+using MoviesHub.Web.Utility;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure API base URLs from appsettings.json
+SD.MovieAPIBase = builder.Configuration["ServiceUrls:MovieAPI"]!;
+SD.ReviewAPIBase = builder.Configuration["ServiceUrls:ReviewAPI"]!;
+SD.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"]!;
+
+// Register services
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IGenreService, GenreService>();
+builder.Services.AddHttpClient<IMovieService, MovieService>();
+builder.Services.AddHttpClient<IBaseService, BaseService>();
+builder.Services.AddHttpClient<IMovieGenreService, MovieGenreService>();
+
+
+
+
+builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+builder.Services.AddScoped<IBaseService, BaseService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IMovieGenreService, MovieGenreService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.ExpireTimeSpan = TimeSpan.FromHours(10);
+        options.LoginPath = "/Auth/Login";
+        options.AccessDeniedPath = "/Auth/AccessDenied";
+    });
 
 var app = builder.Build();
 
@@ -14,7 +48,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

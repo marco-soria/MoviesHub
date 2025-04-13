@@ -1,0 +1,84 @@
+﻿@model MoviesHub.Web.Models.MovieUpdateDto
+
+@{
+    ViewData["Title"] = "Edit Movie";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center">Edit Movie</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Title</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ReleaseYear" class="form-label">Release Year</label>
+                            <input asp-for="ReleaseYear" class="form-control" type="number" min="1900" max="@DateTime.Now.Year" />
+                            <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ImageUrl" class="form-label">Image URL</label>
+                            <input asp-for="ImageUrl" class="form-control" />
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Genres</label>
+                            <div class="row">
+                                @if (ViewBag.Genres != null)
+                                {
+                                    @foreach (var genre in ViewBag.Genres)
+                                    {
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="GenreIds" value="@genre.Id" id="genre_@genre.Id"
+                                                @(Model.GenreIds != null && Model.GenreIds.Contains(genre.Id) ? "checked" : "")>
+                                                <label class="form-check-label" for="genre_@genre.Id">
+                                                    @genre.Name
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="col">
+                                        <p class="text-danger">No genres available.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

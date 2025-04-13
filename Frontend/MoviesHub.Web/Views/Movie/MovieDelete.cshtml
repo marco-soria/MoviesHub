@@ -1,0 +1,65 @@
+﻿@model MoviesHub.Web.Models.MovieDto
+
+@{
+    ViewData["Title"] = "Delete Movie";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="text-center">Delete Movie</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h3>Are you sure you want to delete this movie?</h3>
+                        <p>This action cannot be undone.</p>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img src="@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Title">
+                            }
+                            else
+                            {
+                                <div class="bg-light d-flex justify-content-center align-items-center" style="height: 200px;">
+                                    <span class="text-muted">No Image</span>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <h4>@Model.Title</h4>
+                            <dl class="row">
+                                <dt class="col-sm-4">Release Year</dt>
+                                <dd class="col-sm-8">@Model.ReleaseYear</dd>
+
+                                <dt class="col-sm-4">Genres</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.GenreNames != null && Model.GenreNames.Any())
+                                    {
+                                        @string.Join(", ", Model.GenreNames)
+                                    }
+                                    else
+                                    {
+                                        <span>No genres assigned</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <form asp-action="DeleteConfirmed" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

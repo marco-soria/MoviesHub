@@ -1,0 +1,63 @@
+﻿@model IEnumerable<MoviesHub.Web.Models.GenreDto>
+
+@{
+    ViewData["Title"] = $"Genres for {ViewBag.MovieTitle}";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Genres for Movie: @ViewBag.MovieTitle</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Movie" asp-action="Details" asp-route-id="@ViewBag.MovieId" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> &nbsp; Back to Movie
+            </a>
+        </div>
+    </div>
+    <br />
+
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var genre in Model)
+                {
+                    <tr>
+                        <td>@genre.Id</td>
+                        <td>@genre.Name</td>
+                        <td>
+                            <div class="w-100 btn-group" role="group">
+                                <a asp-controller="MovieGenre" asp-action="Delete"
+                                   asp-route-movieId="@ViewBag.MovieId"
+                                   asp-route-genreId="@genre.Id"
+                                   class="btn btn-danger mx-1">
+                                    <i class="bi bi-trash"></i> Remove Genre
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" class="text-center">No genres associated with this movie</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        <a asp-controller="MovieGenre" asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> &nbsp; Add Genre to Movie
+        </a>
+    </div>
+</div>

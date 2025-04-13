@@ -1,0 +1,63 @@
+﻿@model MoviesHub.Web.Models.MovieGenreCreateDto
+
+@{
+    ViewData["Title"] = "Create Movie-Genre Association";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center">Create Movie-Genre Association</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="MovieId" class="form-label">Movie</label>
+                            <select asp-for="MovieId" class="form-select">
+                                <option value="">-- Select Movie --</option>
+                                @if (ViewBag.Movies != null)
+                                {
+                                    @foreach (var movie in ViewBag.Movies)
+                                    {
+                                        <option value="@movie.Id">@movie.Title</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="MovieId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GenreId" class="form-label">Genre</label>
+                            <select asp-for="GenreId" class="form-select">
+                                <option value="">-- Select Genre --</option>
+                                @if (ViewBag.Genres != null)
+                                {
+                                    @foreach (var genre in ViewBag.Genres)
+                                    {
+                                        <option value="@genre.Id">@genre.Name</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="GenreId" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
