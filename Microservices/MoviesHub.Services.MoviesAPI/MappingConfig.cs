@@ -10,12 +10,19 @@ namespace MoviesHub.Services.MoviesAPI
         {
             var mappingConfig = new MapperConfiguration(config =>
             {
-                config.CreateMap<Movie, MovieDto>().ReverseMap();
+                //config.CreateMap<Movie, MovieDto>().ReverseMap();
+                config.CreateMap<Movie, MovieDto>()
+                   .ForMember(dest => dest.Genres, opt => opt.MapFrom(src => src.MovieGenres.Select(mg => mg.Genre)))
+                   .ForMember(dest => dest.GenreNames, opt => opt.MapFrom(src =>
+                       src.MovieGenres.Where(mg => mg.Genre != null).Select(mg => mg.Genre.Name)));
                 config.CreateMap<Movie, MovieCreateDto>().ReverseMap();
                 config.CreateMap<Movie, MovieUpdateDto>().ReverseMap();
 
+                //config.CreateMap<MovieGenre, MovieGenreDto>().ReverseMap();
+                config.CreateMap<MovieGenre, MovieGenreDto>()
+                    .ForMember(dest => dest.MovieTitle, opt => opt.MapFrom(src => src.Movie.Title))
+                    .ForMember(dest => dest.GenreName, opt => opt.MapFrom(src => src.Genre.Name));
                 config.CreateMap<MovieGenre, MovieGenreCreateDto>().ReverseMap();
-                config.CreateMap<MovieGenre, MovieGenreDto>().ReverseMap();
                 config.CreateMap<MovieGenre, MovieGenreUpdateDto>().ReverseMap();
 
                 config.CreateMap<Genre, GenreDto>().ReverseMap();
