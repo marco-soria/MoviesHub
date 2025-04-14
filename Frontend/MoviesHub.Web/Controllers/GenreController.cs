@@ -2,6 +2,7 @@
 using MoviesHub.Web.Models;
 using MoviesHub.Web.Service.IService;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MoviesHub.Web.Controllers
 {
@@ -21,7 +22,10 @@ namespace MoviesHub.Web.Controllers
 
             if (response != null && response.IsSuccess)
             {
-                genres = JsonConvert.DeserializeObject<List<GenreDto>>(Convert.ToString(response.Result));
+                //genres = JsonConvert.DeserializeObject<List<GenreDto>>(Convert.ToString(response.Result));
+                var json = Convert.ToString(response.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                genres = JsonConvert.DeserializeObject<List<GenreDto>>(extractedResult);
             }
             else
             {
