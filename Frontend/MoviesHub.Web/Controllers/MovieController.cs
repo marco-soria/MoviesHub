@@ -204,6 +204,7 @@ namespace MoviesHub.Web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Restore(int id)
@@ -237,10 +238,8 @@ namespace MoviesHub.Web.Controllers
                 TempData["error"] = response?.Message ?? "Error retrieving deleted movies";
             }
 
-            return View("Restore", movies);
+            return View("DeletedMovies", movies);
         }
-
-        
 
         public async Task<IActionResult> ByGenre(int genreId = 0)
         {

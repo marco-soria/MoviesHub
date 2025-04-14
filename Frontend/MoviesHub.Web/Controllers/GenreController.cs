@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoviesHub.Web.Models;
+using MoviesHub.Web.Service;
 using MoviesHub.Web.Service.IService;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -100,8 +101,12 @@ namespace MoviesHub.Web.Controllers
             var response = await _genreService.GetGenreByIdAsync(id);
             if (response != null && response.IsSuccess)
             {
-                GenreDto genre = JsonConvert.DeserializeObject<GenreDto>(Convert.ToString(response.Result));
-                return View(genre);
+                //GenreDto genre = JsonConvert.DeserializeObject<GenreDto>(Convert.ToString(response.Result));
+                //return View(genre);
+                var json = Convert.ToString(response.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                GenreDto movie = JsonConvert.DeserializeObject<GenreDto>(extractedResult);
+                return View(movie);
             }
             TempData["error"] = response?.Message ?? "Error retrieving genre";
             return RedirectToAction(nameof(Index));
@@ -138,6 +143,26 @@ namespace MoviesHub.Web.Controllers
                 TempData["error"] = response?.Message ?? "Error restoring genre";
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> DeletedGenres()
+        {
+            var response = await _genreService.GetDeletedGenresAsync();
+            List<GenreDto>? genres = new();
+
+            if (response != null && response.IsSuccess)
+            {
+                var json = Convert.ToString(response.Result);
+                var parsedJson = JsonConvert.DeserializeObject<dynamic>(json);
+                genres = JsonConvert.DeserializeObject<List<GenreDto>>(Convert.ToString(parsedJson.result));
+            }
+            else
+            {
+                TempData["error"] = response?.Message ?? "Error retrieving deleted genres";
+            }
+
+            // Ensure the correct model type is passed to the view
+            return View(genres);
         }
 
         public async Task<IActionResult> Movies(int id)

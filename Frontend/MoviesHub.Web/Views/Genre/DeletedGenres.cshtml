@@ -1,0 +1,30 @@
+﻿@model List<MoviesHub.Web.Models.GenreDto>
+
+@{
+    ViewData["Title"] = "Deleted Genres";
+}
+
+<h1>Deleted Genres</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var genre in Model)
+        {
+            <tr>
+                <td>@genre.Name</td>
+                <td>
+                    <form asp-action="Restore" method="post">
+                        <input type="hidden" name="id" value="@genre.Id" />
+                        <button type="submit" class="btn btn-success">Restore</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
