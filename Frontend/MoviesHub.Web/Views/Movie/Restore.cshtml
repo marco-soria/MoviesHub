@@ -1,45 +1,34 @@
-﻿@model MovieDto
+﻿@model List<MoviesHub.Web.Models.MovieDto>
+
 @{
-    ViewData["Title"] = "Restore Movie";
+    ViewData["Title"] = "Deleted Movies";
 }
 
-<form method="post" class="mt-4">
-    <input asp-for="Id" hidden />
+<h1>Deleted Movies</h1>
 
-    <div class="row pb-2">
-        <h2 class="text-primary">Restore Movie</h2>
-        <hr />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Title</label>
-        <input asp-for="Title" disabled class="form-control" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Release Year</label>
-        <input asp-for="ReleaseYear" disabled class="form-control" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Description</label>
-        <textarea asp-for="Description" disabled class="form-control" rows="4"></textarea>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Genres</label>
-        <div>
-            @string.Join(", ", Model.GenreNames)
-        </div>
-    </div>
-
-    <div class="alert alert-info">
-        <strong>Are you sure you want to restore this movie?</strong>
-        <p>This will make the movie available again in the system.</p>
-    </div>
-
-    <button type="submit" class="btn btn-success" style="width:150px">Restore</button>
-    <a asp-controller="Movie" asp-action="Index" class="btn btn-secondary" style="width:150px">
-        Back to List
-    </a>
-</form>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Release Year</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var movie in Model)
+        {
+            <tr>
+                <td>@movie.Title</td>
+                <td>@movie.Description</td>
+                <td>@movie.ReleaseYear</td>
+                <td>
+                    <form asp-action="RestoreMovie" method="post">
+                        <input type="hidden" name="id" value="@movie.Id" />
+                        <button type="submit" class="btn btn-success">Restore</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

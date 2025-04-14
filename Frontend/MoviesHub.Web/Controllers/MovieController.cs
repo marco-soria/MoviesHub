@@ -24,7 +24,6 @@ namespace MoviesHub.Web.Controllers
 
             if (response != null && response.IsSuccess)
             {
-                //movies = JsonConvert.DeserializeObject<List<MovieDto>>(Convert.ToString(response.Result));
                 var json = Convert.ToString(response.Result);
                 var extractedResult = JObject.Parse(json)["result"].ToString();
                 movies = JsonConvert.DeserializeObject<List<MovieDto>>(extractedResult);
@@ -39,11 +38,12 @@ namespace MoviesHub.Web.Controllers
 
         public async Task<IActionResult> Create()
         {
-            // Get all genres for selection
             var genreResponse = await _genreService.GetAllGenresAsync();
             if (genreResponse != null && genreResponse.IsSuccess)
             {
-                ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(Convert.ToString(genreResponse.Result));
+                var json = Convert.ToString(genreResponse.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(extractedResult);
             }
             else
             {
@@ -72,11 +72,12 @@ namespace MoviesHub.Web.Controllers
                 }
             }
 
-            // Repopulate genres for selection if validation fails
             var genreResponse = await _genreService.GetAllGenresAsync();
             if (genreResponse != null && genreResponse.IsSuccess)
             {
-                ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(Convert.ToString(genreResponse.Result));
+                var json = Convert.ToString(genreResponse.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(extractedResult);
             }
             else
             {
@@ -88,13 +89,13 @@ namespace MoviesHub.Web.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            // Get movie data
             var response = await _movieService.GetMovieByIdAsync(id);
             if (response != null && response.IsSuccess)
             {
-                MovieDto movie = JsonConvert.DeserializeObject<MovieDto>(Convert.ToString(response.Result));
+                var json = Convert.ToString(response.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                MovieDto movie = JsonConvert.DeserializeObject<MovieDto>(extractedResult);
 
-                // Convert to update DTO
                 MovieUpdateDto updateDto = new()
                 {
                     Title = movie.Title,
@@ -104,11 +105,12 @@ namespace MoviesHub.Web.Controllers
                     GenreIds = movie.Genres.Select(g => g.Id).ToList()
                 };
 
-                // Get all genres for selection
                 var genreResponse = await _genreService.GetAllGenresAsync();
                 if (genreResponse != null && genreResponse.IsSuccess)
                 {
-                    ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(Convert.ToString(genreResponse.Result));
+                    var genreJson = Convert.ToString(genreResponse.Result);
+                    var genreExtractedResult = JObject.Parse(genreJson)["result"].ToString();
+                    ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(genreExtractedResult);
                 }
                 else
                 {
@@ -141,11 +143,12 @@ namespace MoviesHub.Web.Controllers
                 }
             }
 
-            // Repopulate genres for selection if validation fails
             var genreResponse = await _genreService.GetAllGenresAsync();
             if (genreResponse != null && genreResponse.IsSuccess)
             {
-                ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(Convert.ToString(genreResponse.Result));
+                var json = Convert.ToString(genreResponse.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(extractedResult);
             }
             else
             {
@@ -160,7 +163,9 @@ namespace MoviesHub.Web.Controllers
             var response = await _movieService.GetMovieByIdAsync(id);
             if (response != null && response.IsSuccess)
             {
-                MovieDto movie = JsonConvert.DeserializeObject<MovieDto>(Convert.ToString(response.Result));
+                var json = Convert.ToString(response.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                MovieDto movie = JsonConvert.DeserializeObject<MovieDto>(extractedResult);
                 return View(movie);
             }
 
@@ -173,7 +178,9 @@ namespace MoviesHub.Web.Controllers
             var response = await _movieService.GetMovieByIdAsync(id);
             if (response != null && response.IsSuccess)
             {
-                MovieDto movie = JsonConvert.DeserializeObject<MovieDto>(Convert.ToString(response.Result));
+                var json = Convert.ToString(response.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                MovieDto movie = JsonConvert.DeserializeObject<MovieDto>(extractedResult);
                 return View(movie);
             }
 
@@ -213,26 +220,75 @@ namespace MoviesHub.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> ByGenre(int genreId)
+        public async Task<IActionResult> DeletedMovies()
         {
-            var response = await _movieService.GetMoviesByGenreAsync(genreId);
+            var response = await _movieService.GetDeletedMoviesAsync();
             List<MovieDto>? movies = new();
 
             if (response != null && response.IsSuccess)
             {
-                movies = JsonConvert.DeserializeObject<List<MovieDto>>(Convert.ToString(response.Result));
+                var json = Convert.ToString(response.Result);
+                var jsonObject = JsonConvert.DeserializeObject<dynamic>(json);
+                movies = JsonConvert.DeserializeObject<List<MovieDto>>(Convert.ToString(jsonObject.result));
             }
             else
             {
-                TempData["error"] = response?.Message ?? "Error retrieving movies by genre";
+                TempData["error"] = response?.Message ?? "Error retrieving deleted movies";
             }
 
-            // Get genre name for display
-            var genreResponse = await _genreService.GetGenreByIdAsync(genreId);
+            return View("Restore", movies);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreMovie(int id)
+        {
+            var response = await _movieService.RestoreMovieAsync(id);
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Movie restored successfully";
+            }
+            else
+            {
+                TempData["error"] = response?.Message ?? "Error restoring movie";
+            }
+
+            return RedirectToAction(nameof(DeletedMovies));
+        }
+
+        public async Task<IActionResult> ByGenre(int genreId = 0)
+        {
+            List<MovieDto>? movies = new();
+            ResponseDto response;
+
+            if (genreId == 0)
+            {
+                // Get all movies when "All" is selected
+                response = await _movieService.GetAllMoviesAsync();
+            }
+            else
+            {
+                // Get movies filtered by genre
+                response = await _movieService.GetMoviesByGenreAsync(genreId);
+            }
+
+            if (response != null && response.IsSuccess)
+            {
+                var json = Convert.ToString(response.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                movies = JsonConvert.DeserializeObject<List<MovieDto>>(extractedResult);
+            }
+            else
+            {
+                TempData["error"] = response?.Message ?? "Error retrieving movies";
+            }
+
+            var genreResponse = await _genreService.GetAllGenresAsync();
             if (genreResponse != null && genreResponse.IsSuccess)
             {
-                GenreDto genre = JsonConvert.DeserializeObject<GenreDto>(Convert.ToString(genreResponse.Result));
-                ViewBag.GenreName = genre.Name;
+                var json = Convert.ToString(genreResponse.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(extractedResult);
             }
 
             ViewBag.GenreId = genreId;

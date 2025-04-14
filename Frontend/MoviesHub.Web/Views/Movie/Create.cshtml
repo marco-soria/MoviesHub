@@ -34,6 +34,12 @@
                         </div>
 
                         <div class="mb-3">
+                            <label asp-for="AverageRating" class="form-label">Rating</label>
+                            <input asp-for="AverageRating" class="form-control" type="number" min="0" max="10" />
+                            <span asp-validation-for="AverageRating" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
                             <label asp-for="ImageUrl" class="form-label">Image URL</label>
                             <input asp-for="ImageUrl" class="form-control" />
                             <span asp-validation-for="ImageUrl" class="text-danger"></span>

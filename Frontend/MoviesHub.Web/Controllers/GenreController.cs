@@ -159,5 +159,24 @@ namespace MoviesHub.Web.Controllers
 
             return View(movies);
         }
+
+        public async Task<IActionResult> GetGenresForMovies()
+        {
+            var response = await _genreService.GetAllGenresAsync();
+            List<GenreDto>? genres = new();
+
+            if (response != null && response.IsSuccess)
+            {
+                var json = Convert.ToString(response.Result);
+                var extractedResult = JObject.Parse(json)["result"].ToString();
+                genres = JsonConvert.DeserializeObject<List<GenreDto>>(extractedResult);
+            }
+            else
+            {
+                TempData["error"] = response?.Message ?? "Error retrieving genres";
+            }
+
+            return Json(genres);
+        }
     }
 }

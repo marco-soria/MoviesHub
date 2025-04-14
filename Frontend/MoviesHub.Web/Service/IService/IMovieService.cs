@@ -9,7 +9,9 @@ namespace MoviesHub.Web.Service.IService
         Task<ResponseDto> CreateMovieAsync(MovieCreateDto movie);
         Task<ResponseDto> UpdateMovieAsync(int id, MovieUpdateDto movie);
         Task<ResponseDto> DeleteMovieAsync(int id);
+        // ...existing code...
         Task<ResponseDto> GetMoviesByGenreAsync(int genreId);
         Task<ResponseDto> RestoreMovieAsync(int id);
+        Task<ResponseDto> GetDeletedMoviesAsync();
     }
 }

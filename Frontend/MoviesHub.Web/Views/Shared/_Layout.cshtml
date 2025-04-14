@@ -35,9 +35,14 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" asp-controller="Movie" asp-action="Index">Movies</a></li>
                                 <li><a class="dropdown-item" asp-controller="Genre" asp-action="Index">Genres</a></li>
+                                <li><a class="dropdown-item" asp-controller="Movie" asp-action="DeletedMovies">Deleted Movies</a></li>
+                                <li><a class="dropdown-item" asp-controller="Movie" asp-action="ByGenre">Movies By Genre</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                               
                             </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Movie" asp-action="ByGenre">Movies By Genre</a>
+                        </li>
                     </ul>
                 </div>
             </div>

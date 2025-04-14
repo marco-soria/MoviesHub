@@ -77,5 +77,14 @@ namespace MoviesHub.Web.Service
                 Url = $"{MovieAPIBase}/api/movies/bygenre/{genreId}"
             });
         }
+
+        public async Task<ResponseDto> GetDeletedMoviesAsync()
+        {
+            return await _baseService.SendAsync(new RequestDto
+            {
+                ApiType = ApiType.GET,
+                Url = $"{MovieAPIBase}/api/movies/deleted"
+            });
+        }
     }
 }

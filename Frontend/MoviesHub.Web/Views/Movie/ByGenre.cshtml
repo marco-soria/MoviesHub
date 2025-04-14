@@ -1,22 +1,52 @@
 ﻿@model IEnumerable<MoviesHub.Web.Models.MovieDto>
-
 @{
-    ViewData["Title"] = $"Movies in {ViewBag.GenreName} Genre";
+    ViewData["Title"] = "Movies by Genre";
+    var genres = ViewBag.Genres as List<MoviesHub.Web.Models.GenreDto>;
+    var selectedGenreId = ViewBag.GenreId != null ? (int)ViewBag.GenreId : 0;
 }
-
 <div class="container p-3">
-    <div class="row pt-4">
-        <div class="col-6">
-            <h2 class="text-primary">Movies in Genre: @ViewBag.GenreName</h2>
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-primary">Select a Genre</h2>
+            <form asp-controller="Movie" asp-action="ByGenre" method="get" class="mb-4" id="genreForm">
+                <div class="input-group">
+                    <select name="genreId" id="genreSelect" class="form-select" aria-label="Genre selection" onchange="this.form.submit()">
+                        <option value="0" selected="@(selectedGenreId == 0)">All Movies</option>
+                        @if (genres != null && genres.Any())
+                        {
+                            @foreach (var genre in genres)
+                            {
+                                if (selectedGenreId == genre.Id)
+                                {
+                                    <option value="@genre.Id" selected>@genre.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@genre.Id">@genre.Name</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+            </form>
         </div>
-        <div class="col-6 text-end">
-            <a asp-controller="Genre" asp-action="Index" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> &nbsp; Back to Genres
-            </a>
+    </div>
+    <hr />
+    <div class="row pt-4">
+        <div class="col-12">
+            <h2 class="text-primary">
+                @if (selectedGenreId == 0)
+                {
+                    <span>All Movies</span>
+                }
+                else
+                {
+                    <span>Movies in Selected Genre</span>
+                }
+            </h2>
         </div>
     </div>
     <br />
-
     @if (Model != null && Model.Any())
     {
         <div class="row">
@@ -56,7 +86,14 @@
     else
     {
         <div class="alert alert-info">
-            No movies found for this genre.
+            @if (selectedGenreId == 0)
+            {
+                <span>No movies available in the database.</span>
+            }
+            else
+            {
+                <span>No movies found for this genre.</span>
+            }
         </div>
     }
 </div>
