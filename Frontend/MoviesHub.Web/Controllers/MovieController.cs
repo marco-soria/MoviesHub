@@ -204,7 +204,8 @@ namespace MoviesHub.Web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Restore(int id)
         {
             var response = await _movieService.RestoreMovieAsync(id);
@@ -217,7 +218,7 @@ namespace MoviesHub.Web.Controllers
                 TempData["error"] = response?.Message ?? "Error restoring movie";
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(DeletedMovies));
         }
 
         public async Task<IActionResult> DeletedMovies()
@@ -239,22 +240,7 @@ namespace MoviesHub.Web.Controllers
             return View("Restore", movies);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RestoreMovie(int id)
-        {
-            var response = await _movieService.RestoreMovieAsync(id);
-            if (response != null && response.IsSuccess)
-            {
-                TempData["success"] = "Movie restored successfully";
-            }
-            else
-            {
-                TempData["error"] = response?.Message ?? "Error restoring movie";
-            }
-
-            return RedirectToAction(nameof(DeletedMovies));
-        }
+        
 
         public async Task<IActionResult> ByGenre(int genreId = 0)
         {

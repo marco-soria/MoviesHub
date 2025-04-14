@@ -257,6 +257,35 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                 response.ErrorMessages.Add(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
+
+
+        }
+
+        [HttpGet("deleted")]
+        public async Task<ActionResult<ResponseDto>> GetDeletedGenres()
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var deletedGenres = await _db.Genres
+                    .IgnoreQueryFilters() // Ignore the global query filter for IsDeleted
+                    .Where(m => m.IsDeleted)
+                    .Include(m => m.MovieGenres)
+                    .ThenInclude(mv => mv.Movie)
+                    .ToListAsync();
+
+                response.Result = _mapper.Map<List<GenreDto>>(deletedGenres);
+                response.IsSuccess = true;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving deleted genres");
+                response.IsSuccess = false;
+                response.Message = "Error retrieving deleted genres";
+                response.ErrorMessages = new List<string> { ex.Message };
+                return StatusCode(500, response);
+            }
         }
     }
 }

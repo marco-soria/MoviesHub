@@ -18,6 +18,7 @@ namespace MoviesHub.Services.MoviesAPI.Data
 
             // Ensure the query filter for IsDeleted is applied only when not explicitly ignored
             modelBuilder.Entity<Movie>().HasQueryFilter(m => !m.IsDeleted);
+            modelBuilder.Entity<Genre>().HasQueryFilter(m => !m.IsDeleted);
 
             // Índice para búsquedas por título 
             modelBuilder.Entity<Movie>()

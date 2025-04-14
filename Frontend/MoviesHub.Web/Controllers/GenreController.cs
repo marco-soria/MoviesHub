@@ -9,10 +9,12 @@ namespace MoviesHub.Web.Controllers
     public class GenreController : Controller
     {
         private readonly IGenreService _genreService;
+        private readonly ILogger<GenreController> _logger;
 
-        public GenreController(IGenreService genreService)
+        public GenreController(IGenreService genreService, ILogger<GenreController> logger)
         {
             _genreService = genreService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
@@ -109,6 +111,9 @@ namespace MoviesHub.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Log the ID being sent for deletion
+            _logger.LogInformation("Attempting to delete genre with ID: {Id}", id);
+
             var response = await _genreService.DeleteGenreAsync(id);
             if (response != null && response.IsSuccess)
             {
@@ -178,5 +183,7 @@ namespace MoviesHub.Web.Controllers
 
             return Json(genres);
         }
+
+
     }
 }

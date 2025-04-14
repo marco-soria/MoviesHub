@@ -51,12 +51,14 @@ namespace MoviesHub.Web.Service
             });
         }
 
+        // ...existing code...
         public async Task<ResponseDto> DeleteGenreAsync(int id)
         {
+            // Ensure the URL includes the ID parameter
             return await _baseService.SendAsync(new RequestDto
             {
                 ApiType = ApiType.DELETE,
-                Url = $"{MovieAPIBase}/api/genres/{id}"
+                Url = $"{MovieAPIBase}/api/genres/{id}" // Correctly format the URL
             });
         }
 
@@ -75,6 +77,15 @@ namespace MoviesHub.Web.Service
             {
                 ApiType = ApiType.GET,
                 Url = $"{MovieAPIBase}/api/genres/{id}/movies"
+            });
+        }
+
+        public async Task<ResponseDto> GetDeletedGenresAsync()
+        {
+            return await _baseService.SendAsync(new RequestDto
+            {
+                ApiType = ApiType.GET,
+                Url = $"{MovieAPIBase}/api/genres/deleted"
             });
         }
     }

@@ -23,7 +23,7 @@
                 <td>@movie.Description</td>
                 <td>@movie.ReleaseYear</td>
                 <td>
-                    <form asp-action="RestoreMovie" method="post">
+                    <form asp-action="Restore" method="post">
                         <input type="hidden" name="id" value="@movie.Id" />
                         <button type="submit" class="btn btn-success">Restore</button>
                     </form>

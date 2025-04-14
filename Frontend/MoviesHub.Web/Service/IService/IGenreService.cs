@@ -11,5 +11,7 @@ namespace MoviesHub.Web.Service.IService
         Task<ResponseDto> DeleteGenreAsync(int id);
         Task<ResponseDto> RestoreGenreAsync(int id);
         Task<ResponseDto> GetMoviesForGenreAsync(int id);
+
+        Task<ResponseDto> GetDeletedGenresAsync();
     }
 }
