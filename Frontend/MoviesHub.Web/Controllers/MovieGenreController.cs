@@ -2,6 +2,9 @@
 using MoviesHub.Web.Models;
 using MoviesHub.Web.Service.IService;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MoviesHub.Web.Controllers
 {
@@ -25,14 +28,30 @@ namespace MoviesHub.Web.Controllers
 
             if (response != null && response.IsSuccess)
             {
-                movieGenres = JsonConvert.DeserializeObject<List<MovieGenreDto>>(Convert.ToString(response.Result));
+                try
+                {
+                    // Convert the result to a string
+                    var json = Convert.ToString(response.Result);
+                    
+                    // Parse the JSON and extract the nested "result" array
+                    var extractedResult = JObject.Parse(json)["result"].ToString();
+                    
+                    // Deserialize the extracted array into a list of MovieGenreDto
+                    movieGenres = JsonConvert.DeserializeObject<List<MovieGenreDto>>(extractedResult);
+                }
+                catch (Exception ex)
+                {
+                    TempData["error"] = $"Error parsing movie-genre data: {ex.Message}";
+                    Console.WriteLine($"JSON Parsing Error: {ex.Message}");
+                    Console.WriteLine($"Response Result: {JsonConvert.SerializeObject(response.Result)}");
+                }
             }
             else
             {
                 TempData["error"] = response?.Message ?? "Error retrieving movie-genre associations";
             }
 
-            return View(movieGenres);
+            return View(movieGenres ?? new List<MovieGenreDto>());
         }
 
         public async Task<IActionResult> Create()
@@ -43,7 +62,17 @@ namespace MoviesHub.Web.Controllers
 
             if (movieResponse != null && movieResponse.IsSuccess)
             {
-                ViewBag.Movies = JsonConvert.DeserializeObject<List<MovieDto>>(Convert.ToString(movieResponse.Result));
+                try
+                {
+                    var json = Convert.ToString(movieResponse.Result);
+                    var extractedResult = JObject.Parse(json)["result"].ToString();
+                    ViewBag.Movies = JsonConvert.DeserializeObject<List<MovieDto>>(extractedResult);
+                }
+                catch (Exception)
+                {
+                    ViewBag.Movies = new List<MovieDto>();
+                    TempData["error"] = "Error parsing movie data";
+                }
             }
             else
             {
@@ -53,7 +82,17 @@ namespace MoviesHub.Web.Controllers
 
             if (genreResponse != null && genreResponse.IsSuccess)
             {
-                ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(Convert.ToString(genreResponse.Result));
+                try
+                {
+                    var json = Convert.ToString(genreResponse.Result);
+                    var extractedResult = JObject.Parse(json)["result"].ToString();
+                    ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(extractedResult);
+                }
+                catch (Exception)
+                {
+                    ViewBag.Genres = new List<GenreDto>();
+                    TempData["error"] = "Error parsing genre data";
+                }
             }
             else
             {
@@ -88,7 +127,16 @@ namespace MoviesHub.Web.Controllers
 
             if (movieResponse != null && movieResponse.IsSuccess)
             {
-                ViewBag.Movies = JsonConvert.DeserializeObject<List<MovieDto>>(Convert.ToString(movieResponse.Result));
+                try
+                {
+                    var json = Convert.ToString(movieResponse.Result);
+                    var extractedResult = JObject.Parse(json)["result"].ToString();
+                    ViewBag.Movies = JsonConvert.DeserializeObject<List<MovieDto>>(extractedResult);
+                }
+                catch (Exception)
+                {
+                    ViewBag.Movies = new List<MovieDto>();
+                }
             }
             else
             {
@@ -97,7 +145,16 @@ namespace MoviesHub.Web.Controllers
 
             if (genreResponse != null && genreResponse.IsSuccess)
             {
-                ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(Convert.ToString(genreResponse.Result));
+                try
+                {
+                    var json = Convert.ToString(genreResponse.Result);
+                    var extractedResult = JObject.Parse(json)["result"].ToString();
+                    ViewBag.Genres = JsonConvert.DeserializeObject<List<GenreDto>>(extractedResult);
+                }
+                catch (Exception)
+                {
+                    ViewBag.Genres = new List<GenreDto>();
+                }
             }
             else
             {
@@ -112,8 +169,18 @@ namespace MoviesHub.Web.Controllers
             var response = await _movieGenreService.GetMovieGenreAsync(movieId, genreId);
             if (response != null && response.IsSuccess)
             {
-                MovieGenreDto movieGenre = JsonConvert.DeserializeObject<MovieGenreDto>(Convert.ToString(response.Result));
-                return View(movieGenre);
+                try
+                {
+                    var json = Convert.ToString(response.Result);
+                    var extractedResult = JObject.Parse(json)["result"].ToString();
+                    MovieGenreDto movieGenre = JsonConvert.DeserializeObject<MovieGenreDto>(extractedResult);
+                    return View(movieGenre);
+                }
+                catch (Exception)
+                {
+                    TempData["error"] = "Error parsing movie-genre data";
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             TempData["error"] = response?.Message ?? "Error retrieving movie-genre association";
@@ -144,7 +211,16 @@ namespace MoviesHub.Web.Controllers
 
             if (response != null && response.IsSuccess)
             {
-                genres = JsonConvert.DeserializeObject<List<GenreDto>>(Convert.ToString(response.Result));
+                try
+                {
+                    var json = Convert.ToString(response.Result);
+                    var extractedResult = JObject.Parse(json)["result"].ToString();
+                    genres = JsonConvert.DeserializeObject<List<GenreDto>>(extractedResult);
+                }
+                catch (Exception ex)
+                {
+                    TempData["error"] = $"Error parsing genre data: {ex.Message}";
+                }
             }
             else
             {
@@ -155,8 +231,17 @@ namespace MoviesHub.Web.Controllers
             var movieResponse = await _movieService.GetMovieByIdAsync(movieId);
             if (movieResponse != null && movieResponse.IsSuccess)
             {
-                MovieDto movie = JsonConvert.DeserializeObject<MovieDto>(Convert.ToString(movieResponse.Result));
-                ViewBag.MovieTitle = movie.Title;
+                try
+                {
+                    var json = Convert.ToString(movieResponse.Result);
+                    var extractedResult = JObject.Parse(json)["result"].ToString();
+                    MovieDto movie = JsonConvert.DeserializeObject<MovieDto>(extractedResult);
+                    ViewBag.MovieTitle = movie.Title;
+                }
+                catch (Exception)
+                {
+                    ViewBag.MovieTitle = "Unknown Movie";
+                }
             }
 
             ViewBag.MovieId = movieId;
@@ -170,7 +255,16 @@ namespace MoviesHub.Web.Controllers
 
             if (response != null && response.IsSuccess)
             {
-                movies = JsonConvert.DeserializeObject<List<MovieDto>>(Convert.ToString(response.Result));
+                try
+                {
+                    var json = Convert.ToString(response.Result);
+                    var extractedResult = JObject.Parse(json)["result"].ToString();
+                    movies = JsonConvert.DeserializeObject<List<MovieDto>>(extractedResult);
+                }
+                catch (Exception ex)
+                {
+                    TempData["error"] = $"Error parsing movie data: {ex.Message}";
+                }
             }
             else
             {
@@ -181,8 +275,17 @@ namespace MoviesHub.Web.Controllers
             var genreResponse = await _genreService.GetGenreByIdAsync(genreId);
             if (genreResponse != null && genreResponse.IsSuccess)
             {
-                GenreDto genre = JsonConvert.DeserializeObject<GenreDto>(Convert.ToString(genreResponse.Result));
-                ViewBag.GenreName = genre.Name;
+                try
+                {
+                    var json = Convert.ToString(genreResponse.Result);
+                    var extractedResult = JObject.Parse(json)["result"].ToString();
+                    GenreDto genre = JsonConvert.DeserializeObject<GenreDto>(extractedResult);
+                    ViewBag.GenreName = genre.Name;
+                }
+                catch (Exception)
+                {
+                    ViewBag.GenreName = "Unknown Genre";
+                }
             }
 
             ViewBag.GenreId = genreId;
