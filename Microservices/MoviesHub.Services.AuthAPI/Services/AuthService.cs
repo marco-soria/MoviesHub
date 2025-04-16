@@ -55,10 +55,7 @@ namespace MoviesHub.Services.AuthAPI.Services
                 }
             }
             catch (Exception ex)
-            
             {
-                
-                return "An error occurred during registration" + ex;
             }
 
             return "Error encontrado";
@@ -76,31 +73,7 @@ namespace MoviesHub.Services.AuthAPI.Services
                 };
             }
 
-            // Look for user by either username or email
-            //var user = _db.ApplicationUsers.FirstOrDefault(x =>
-            //    x.UserName.ToLower() == loginRequestDto.UserName.ToLower() ||
-            //    x.Email.ToLower() == loginRequestDto.UserName.ToLower());
-
-            //if (user == null)
-            //{
-            //    return new LoginResponseDto()
-            //    {
-            //        User = null,
-            //        Token = ""
-            //    };
-            //}
-
-            //bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
-            //if (isValid == false)
-            //{
-            //    return new LoginResponseDto()
-            //    {
-            //        User = null,
-            //        Token = ""
-            //    };
-            //}
-
-            //si lo encuentra al usuario deberia generar el token
+            //si lo encuentra al usuario deberia general el token
             var roles = await _userManager.GetRolesAsync(user);
             var token = _jwtTokenGenerator.GenerateToken(user, roles);
 
