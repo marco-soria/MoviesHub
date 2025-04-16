@@ -77,7 +77,7 @@ namespace MoviesHub.Services.AuthAPI.Data
                 // Admin
                 (new ApplicationUser
                 {
-                    UserName = "admin",
+                    UserName = "admin@example.com",
                     Email = "admin@example.com",
                     FirstName = "Admin",
                     LastName = "Principal",
@@ -89,7 +89,7 @@ namespace MoviesHub.Services.AuthAPI.Data
                 // Manager
                 (new ApplicationUser
                 {
-                    UserName = "manager",
+                    UserName = "manager@example.com",
                     Email = "manager@example.com",
                     FirstName = "Manager",
                     LastName = "Manager",
@@ -101,7 +101,7 @@ namespace MoviesHub.Services.AuthAPI.Data
                 // Usuarios normales
                 (new ApplicationUser
                 {
-                    UserName = "johndoe",
+                    UserName = "john@example.com",
                     Email = "john@example.com",
                     FirstName = "John",
                     LastName = "Doe",
@@ -112,7 +112,7 @@ namespace MoviesHub.Services.AuthAPI.Data
 
                 (new ApplicationUser
                 {
-                    UserName = "janedoe",
+                    UserName = "jane@example.com",
                     Email = "jane@example.com",
                     FirstName = "Jane",
                     LastName = "Doe",
@@ -123,7 +123,7 @@ namespace MoviesHub.Services.AuthAPI.Data
 
                 (new ApplicationUser
                 {
-                    UserName = "alice",
+                    UserName = "alice@example.com",
                     Email = "alice@example.com",
                     FirstName = "Alice",
                     LastName = "Johnson",
@@ -134,7 +134,7 @@ namespace MoviesHub.Services.AuthAPI.Data
 
                 (new ApplicationUser
                 {
-                    UserName = "bob",
+                    UserName = "bob@example.com",
                     Email = "bob@example.com",
                     FirstName = "Bob",
                     LastName = "Smith",
@@ -145,7 +145,7 @@ namespace MoviesHub.Services.AuthAPI.Data
 
                 (new ApplicationUser
                 {
-                    UserName = "emma",
+                    UserName = "emma@example.com",
                     Email = "emma@example.com",
                     FirstName = "Emma",
                     LastName = "Williams",
@@ -156,7 +156,7 @@ namespace MoviesHub.Services.AuthAPI.Data
 
                 (new ApplicationUser
                 {
-                    UserName = "michael",
+                    UserName = "michael@example.com",
                     Email = "michael@example.com",
                     FirstName = "Michael",
                     LastName = "Brown",
@@ -167,7 +167,7 @@ namespace MoviesHub.Services.AuthAPI.Data
 
                 (new ApplicationUser
                 {
-                    UserName = "sarah",
+                    UserName = "sarah@example.com",
                     Email = "sarah@example.com",
                     FirstName = "Sarah",
                     LastName = "Davis",
@@ -178,7 +178,7 @@ namespace MoviesHub.Services.AuthAPI.Data
 
                 (new ApplicationUser
                 {
-                    UserName = "david",
+                    UserName = "david@example.com",
                     Email = "david@example.com",
                     FirstName = "David",
                     LastName = "Miller",
