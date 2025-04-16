@@ -1,8 +1,8 @@
 ﻿using MoviesHub.Web.Models;
-using MoviesHub.Web.Service.IService;
+using MoviesHub.Web.Service.IServices;
 using static MoviesHub.Web.Utility.SD;
 
-namespace MoviesHub.Web.Service
+namespace MoviesHub.Web.Services
 {
     public class MovieGenreService : IMovieGenreService
     {

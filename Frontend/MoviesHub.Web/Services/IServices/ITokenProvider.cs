@@ -1,4 +1,4 @@
-﻿namespace MoviesHub.Web.Service.IService
+﻿namespace MoviesHub.Web.Service.IServices
 {
     public interface ITokenProvider
     {

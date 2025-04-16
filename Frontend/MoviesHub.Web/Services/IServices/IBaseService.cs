@@ -1,6 +1,6 @@
 ﻿using MoviesHub.Web.Models;
 
-namespace MoviesHub.Web.Service.IService
+namespace MoviesHub.Web.Service.IServices
 {
     public interface IBaseService
     {

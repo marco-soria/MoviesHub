@@ -46,7 +46,7 @@ namespace MoviesHub.Services.AuthAPI.Controllers
             return Ok(_responseDto);
         }
 
-        [HttpPost("assignRole")]
+        [HttpPost("assignrole")]
         public async Task<IActionResult> AssignRole([FromBody] RegistrationRequestDto registrationRequestDto)
         {
             var assignRole = await _authService.AssignRole(registrationRequestDto.Email, registrationRequestDto.Role);

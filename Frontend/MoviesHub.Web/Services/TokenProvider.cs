@@ -1,7 +1,7 @@
-﻿using MoviesHub.Web.Service.IService;
+﻿using MoviesHub.Web.Service.IServices;
 using MoviesHub.Web.Utility;
 
-namespace MoviesHub.Web.Service
+namespace MoviesHub.Web.Services
 {
     public class TokenProvider : ITokenProvider
     {

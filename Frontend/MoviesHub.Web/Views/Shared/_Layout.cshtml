@@ -45,6 +45,27 @@
                             <a class="nav-link" asp-controller="Movie" asp-action="ByGenre">Movies By Genre</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav">
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Register">Register</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Bienvenido, @User.Identity.Name</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>

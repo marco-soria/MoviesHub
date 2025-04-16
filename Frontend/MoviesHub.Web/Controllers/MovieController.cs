@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoviesHub.Web.Models;
-using MoviesHub.Web.Service.IService;
+using MoviesHub.Web.Service.IServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

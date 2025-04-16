@@ -1,11 +1,11 @@
 ﻿using MoviesHub.Web.Models;
-using MoviesHub.Web.Service.IService;
+using MoviesHub.Web.Service.IServices;
 using Newtonsoft.Json;
 using static MoviesHub.Web.Utility.SD;
 using System.Net;
 using System.Text;
 
-namespace MoviesHub.Web.Service
+namespace MoviesHub.Web.Services
 {
     public class BaseService : IBaseService
     {

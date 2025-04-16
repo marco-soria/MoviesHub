@@ -1,91 +1,89 @@
 ﻿using MoviesHub.Web.Models;
-using MoviesHub.Web.Service.IService;
+using MoviesHub.Web.Service.IServices;
 using static MoviesHub.Web.Utility.SD;
 
-namespace MoviesHub.Web.Service
+namespace MoviesHub.Web.Services
 {
-    public class GenreService : IGenreService
+    public class MovieService : IMovieService
     {
         private readonly IBaseService _baseService;
 
-        public GenreService(IBaseService baseService)
+        public MovieService(IBaseService baseService)
         {
             _baseService = baseService;
         }
 
-        public async Task<ResponseDto> GetAllGenresAsync()
+        public async Task<ResponseDto> GetAllMoviesAsync()
         {
             return await _baseService.SendAsync(new RequestDto
             {
                 ApiType = ApiType.GET,
-                Url = $"{MovieAPIBase}/api/genres"
+                Url = $"{MovieAPIBase}/api/movies"
             });
         }
 
-        public async Task<ResponseDto> GetGenreByIdAsync(int id)
+        public async Task<ResponseDto> GetMovieByIdAsync(int id)
         {
             return await _baseService.SendAsync(new RequestDto
             {
                 ApiType = ApiType.GET,
-                Url = $"{MovieAPIBase}/api/genres/{id}"
+                Url = $"{MovieAPIBase}/api/movies/{id}"
             });
         }
 
-        public async Task<ResponseDto> CreateGenreAsync(GenreCreateDto genre)
+        public async Task<ResponseDto> CreateMovieAsync(MovieCreateDto movie)
         {
             return await _baseService.SendAsync(new RequestDto
             {
                 ApiType = ApiType.POST,
-                Data = genre,
-                Url = $"{MovieAPIBase}/api/genres"
+                Data = movie,
+                Url = $"{MovieAPIBase}/api/movies"
             });
         }
 
-        public async Task<ResponseDto> UpdateGenreAsync(int id, GenreUpdateDto genre)
+        public async Task<ResponseDto> UpdateMovieAsync(int id, MovieUpdateDto movie)
         {
             return await _baseService.SendAsync(new RequestDto
             {
                 ApiType = ApiType.PUT,
-                Data = genre,
-                Url = $"{MovieAPIBase}/api/genres/{id}"
+                Data = movie,
+                Url = $"{MovieAPIBase}/api/movies/{id}"
             });
         }
 
-        // ...existing code...
-        public async Task<ResponseDto> DeleteGenreAsync(int id)
+        public async Task<ResponseDto> DeleteMovieAsync(int id)
         {
-            // Ensure the URL includes the ID parameter
             return await _baseService.SendAsync(new RequestDto
             {
                 ApiType = ApiType.DELETE,
-                Url = $"{MovieAPIBase}/api/genres/{id}" // Correctly format the URL
+                Url = $"{MovieAPIBase}/api/movies/{id}"
             });
         }
 
-        public async Task<ResponseDto> RestoreGenreAsync(int id)
+        public async Task<ResponseDto> RestoreMovieAsync(int id)
         {
             return await _baseService.SendAsync(new RequestDto
             {
                 ApiType = ApiType.PATCH,
-                Url = $"{MovieAPIBase}/api/genres/{id}/restore"
+                Url = $"{MovieAPIBase}/api/movies/{id}/restore"
             });
         }
 
-        public async Task<ResponseDto> GetMoviesForGenreAsync(int id)
+        public async Task<ResponseDto> GetMoviesByGenreAsync(int genreId)
         {
             return await _baseService.SendAsync(new RequestDto
             {
                 ApiType = ApiType.GET,
-                Url = $"{MovieAPIBase}/api/genres/{id}/movies"
+                Url = $"{MovieAPIBase}/api/movies/bygenre/{genreId}"
             });
         }
 
-        public async Task<ResponseDto> GetDeletedGenresAsync()
+        public async Task<ResponseDto> GetDeletedMoviesAsync()
         {
             return await _baseService.SendAsync(new RequestDto
             {
                 ApiType = ApiType.GET,
-                Url = $"{MovieAPIBase}/api/genres/deleted"
+                Url = $"{MovieAPIBase}/api/movies/deleted"
             });
         }
     }
