@@ -1,4 +1,8 @@
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using MoviesHub.Services.ReviewsAPI;
+using MoviesHub.Services.ReviewsAPI.Data;
 using MoviesHub.Services.ReviewsAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +37,16 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+builder.Services.AddDbContext<ReviewDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+//AutoMapper
+IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.AddAppAuthentication();
 builder.Services.AddAuthorization();
 
@@ -53,4 +67,18 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+ApplyMigration();
+
 app.Run();
+
+void ApplyMigration()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var _db = scope.ServiceProvider.GetRequiredService<ReviewDbContext>();
+        if (_db.Database.GetPendingMigrations().Count() > 0)
+        {
+            _db.Database.Migrate();
+        }
+    }
+}

@@ -24,7 +24,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
         
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<ResponseDto>> GetGenres()
         {
             var response = new ResponseDto();
