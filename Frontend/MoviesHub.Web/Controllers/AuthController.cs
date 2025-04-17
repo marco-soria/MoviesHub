@@ -153,80 +153,113 @@ namespace MoviesHub.Web.Controllers
         //    }
         //}
 
+        
+
         [HttpGet]
         public IActionResult Register()
         {
-            var roleList = new List<SelectListItem>
-         {
-             new SelectListItem()
-             {
-                 Text = SD.RoleAdmin,
-                 Value = SD.RoleAdmin,
-             },
-             new SelectListItem()
-             {
-                 Text = SD.RoleManager,
-                 Value = SD.RoleManager,
-             },
-             new SelectListItem()
-             {
-                 Text = SD.RoleUser,
-                 Value = SD.RoleUser,
-             },
-         };
-
-            ViewBag.RoleList = roleList;
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Register(RegistrationRequestDto registrationRequestDto)
         {
-            ResponseDto responseDto = await _authService.RegisterAsync(registrationRequestDto);
+            // Asignar el rol User por defecto
+            registrationRequestDto.Role = SD.RoleUser;
 
-            ResponseDto assignRole;
+            ResponseDto responseDto = await _authService.RegisterAsync(registrationRequestDto);
 
             if (responseDto != null && responseDto.IsSuccess)
             {
-                if (string.IsNullOrEmpty(registrationRequestDto.Role))
-                {
-                    registrationRequestDto.Role = SD.RoleAdmin;
-                }
-                assignRole = await _authService.AssignRoleAsync(registrationRequestDto);
+                // Asignar el rol
+                ResponseDto assignRole = await _authService.AssignRoleAsync(registrationRequestDto);
+
                 if (assignRole != null && assignRole.IsSuccess)
                 {
                     TempData["success"] = "Registro exitoso";
                     return RedirectToAction(nameof(Login));
                 }
             }
-            else
-            {
-                TempData["error"] = responseDto.Message;
-            }
 
-            var roleList = new List<SelectListItem>
-         {
-            new SelectListItem()
-             {
-                 Text = SD.RoleAdmin,
-                 Value = SD.RoleAdmin,
-             },
-             new SelectListItem()
-             {
-                 Text = SD.RoleManager,
-                 Value = SD.RoleManager,
-             },
-             new SelectListItem()
-             {
-                 Text = SD.RoleUser,
-                 Value = SD.RoleUser,
-             },
-         };
-
-            ViewBag.RoleList = roleList;
+            TempData["error"] = responseDto?.Message ?? "Error al registrar el usuario";
             return View(registrationRequestDto);
-
         }
+
+
+        //[HttpGet]
+        //public IActionResult Register()
+        //{
+        //    var roleList = new List<SelectListItem>
+        // {
+        //     new SelectListItem()
+        //     {
+        //         Text = SD.RoleAdmin,
+        //         Value = SD.RoleAdmin,
+        //     },
+        //     new SelectListItem()
+        //     {
+        //         Text = SD.RoleManager,
+        //         Value = SD.RoleManager,
+        //     },
+        //     new SelectListItem()
+        //     {
+        //         Text = SD.RoleUser,
+        //         Value = SD.RoleUser,
+        //     },
+        // };
+
+        //    ViewBag.RoleList = roleList;
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> Register(RegistrationRequestDto registrationRequestDto)
+        //{
+        //    ResponseDto responseDto = await _authService.RegisterAsync(registrationRequestDto);
+
+        //    ResponseDto assignRole;
+
+        //    if (responseDto != null && responseDto.IsSuccess)
+        //    {
+        //        if (string.IsNullOrEmpty(registrationRequestDto.Role))
+        //        {
+        //            registrationRequestDto.Role = SD.RoleAdmin;
+        //        }
+        //        assignRole = await _authService.AssignRoleAsync(registrationRequestDto);
+        //        if (assignRole != null && assignRole.IsSuccess)
+        //        {
+        //            TempData["success"] = "Registro exitoso";
+        //            return RedirectToAction(nameof(Login));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        TempData["error"] = responseDto.Message;
+        //    }
+
+        //    var roleList = new List<SelectListItem>
+        // {
+        //    new SelectListItem()
+        //     {
+        //         Text = SD.RoleAdmin,
+        //         Value = SD.RoleAdmin,
+        //     },
+        //     new SelectListItem()
+        //     {
+        //         Text = SD.RoleManager,
+        //         Value = SD.RoleManager,
+        //     },
+        //     new SelectListItem()
+        //     {
+        //         Text = SD.RoleUser,
+        //         Value = SD.RoleUser,
+        //     },
+        // };
+
+        //    ViewBag.RoleList = roleList;
+        //    return View(registrationRequestDto);
+
+        //}
 
         [HttpGet]
         public async Task<IActionResult> Logout()
@@ -242,6 +275,46 @@ namespace MoviesHub.Web.Controllers
             return View();
         }
 
+       
+
+        [HttpGet]
+        public IActionResult AssignRole()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignRole(RoleAssignmentDto roleAssignmentDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(roleAssignmentDto);
+            }
+
+            try
+            {
+                // Usar el nuevo método con DTO específico
+                ResponseDto responseDto = await _authService.AssignRoleWithDtoAsync(roleAssignmentDto);
+
+                if (responseDto != null && responseDto.IsSuccess)
+                {
+                    TempData["success"] = "Rol asignado correctamente";
+                }
+                else
+                {
+                    TempData["error"] = responseDto?.Message ?? "Error al asignar el rol";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"Error: {ex.Message}";
+                // Log the exception details
+                Console.WriteLine($"Exception: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            }
+
+            return View(roleAssignmentDto);
+        }
 
 
         private async Task SignUser(LoginResponseDto loginResponseDto)

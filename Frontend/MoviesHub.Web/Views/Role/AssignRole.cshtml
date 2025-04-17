@@ -1,0 +1,96 @@
+﻿@using MoviesHub.Web.Utility
+@model RoleAssignmentDto
+
+@{
+    ViewData["Title"] = "Gestión de Roles";
+    var usersList = ViewBag.Users as List<UserWithRoleDto> ?? new List<UserWithRoleDto>();
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center">Usuarios y sus roles</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead class="bg-dark text-white">
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Roles</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in usersList)
+                                {
+                                    <tr>
+                                        <td>@user.Email</td>
+                                        <td>@user.FirstName</td>
+                                        <td>@user.LastName</td>
+                                        <td>
+                                            @if (user.Roles != null && user.Roles.Any())
+                                            {
+                                                foreach (var role in user.Roles)
+                                                {
+                                                    <span class="badge bg-success me-1">@role</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Sin roles asignados</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center">Asignar Rol a Usuario</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="mb-3">
+                        <div class="row">
+                            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                                <label asp-for="Email" class="form-label">Email del Usuario</label>
+                                <input asp-for="Email" class="form-control" placeholder="Email..." />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                                <label asp-for="Role" class="form-label">Rol</label>
+                                <select asp-for="Role" class="form-select">
+                                    <option value="" disabled selected>--Seleccionar Rol--</option>
+                                    <option value="@SD.RoleAdmin">@SD.RoleAdmin</option>
+                                    <option value="@SD.RoleManager">@SD.RoleManager</option>
+                                    <option value="@SD.RoleUser">@SD.RoleUser</option>
+                                </select>
+                                <span asp-validation-for="Role" class="text-danger"></span>
+                            </div>
+                            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                                <button type="submit" class="form-control btn btn-primary" value="Submit">Asignar Rol</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+

@@ -9,5 +9,11 @@ namespace MoviesHub.Web.Services.IServices
         Task<ResponseDto?> LoginAsync(LoginRequestDto loginRequestDto);
 
         Task<ResponseDto?> AssignRoleAsync(RegistrationRequestDto registrationRequestDto);
+
+        Task<ResponseDto?> AssignRoleWithDtoAsync(RoleAssignmentDto roleAssignmentDto);
+
+        Task<ResponseDto?> GetUsersWithRolesAsync(); // Nuevo método
+
+
     }
 }

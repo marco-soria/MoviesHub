@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using MoviesHub.Services.AuthAPI.Data;
 using MoviesHub.Services.AuthAPI.Models;
 using MoviesHub.Services.AuthAPI.Models.Dto;
@@ -95,6 +96,22 @@ namespace MoviesHub.Services.AuthAPI.Services
             return loginResponseDto;
 
         }
+        //public async Task<bool> AssignRole(string email, string roleName)
+        //{
+        //    var user = _db.ApplicationUsers.FirstOrDefault(x => x.Email.ToLower() == email.ToLower());
+
+        //    if (user != null)
+        //    {
+        //        if (!_roleManager.RoleExistsAsync(roleName).GetAwaiter().GetResult())
+        //        {
+        //            _roleManager.CreateAsync(new IdentityRole(roleName)).GetAwaiter().GetResult();
+        //        }
+        //        await _userManager.AddToRoleAsync(user, roleName);
+        //        return true;
+        //    }
+        //    return false;
+        //}
+
         public async Task<bool> AssignRole(string email, string roleName)
         {
             var user = _db.ApplicationUsers.FirstOrDefault(x => x.Email.ToLower() == email.ToLower());
@@ -105,10 +122,55 @@ namespace MoviesHub.Services.AuthAPI.Services
                 {
                     _roleManager.CreateAsync(new IdentityRole(roleName)).GetAwaiter().GetResult();
                 }
+
+                // Get current roles
+                var currentRoles = await _userManager.GetRolesAsync(user);
+
+                // Remove all current roles
+                if (currentRoles.Any())
+                {
+                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                }
+
+                // Add the new role
                 await _userManager.AddToRoleAsync(user, roleName);
                 return true;
             }
             return false;
         }
+
+        // Agregar este método a la clase AuthService
+        public async Task<bool> AssignRoleWithDto(RoleAssignmentDto roleAssignmentDto)
+        {
+            return await AssignRole(roleAssignmentDto.Email, roleAssignmentDto.Role);
+        }
+
+        public async Task<List<UserWithRoleDto>> GetUsersWithRoles()
+        {
+            var users = _db.ApplicationUsers.Where(u => !u.IsDeleted).ToList();
+            var usersWithRoles = new List<UserWithRoleDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                var userWithRole = new UserWithRoleDto
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    Roles = roles.ToList()
+                };
+
+                usersWithRoles.Add(userWithRole);
+            }
+
+            return usersWithRoles;
+        }
+
+
+
     }
 }

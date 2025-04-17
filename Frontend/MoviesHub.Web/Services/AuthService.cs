@@ -43,5 +43,26 @@ namespace MoviesHub.Web.Services
                 Url = SD.AuthAPIBase + "/api/auth/register"
             }, withBearerToken: false);
         }
+
+        public async Task<ResponseDto?> AssignRoleWithDtoAsync(RoleAssignmentDto roleAssignmentDto)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = roleAssignmentDto,
+                Url = SD.AuthAPIBase + "/api/auth/assignrolewithDto"
+            });
+        }
+
+        public async Task<ResponseDto?> GetUsersWithRolesAsync()
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.GET,
+                Url = SD.AuthAPIBase + "/api/auth/users-with-roles"
+            });
+        }
+
+
     }
 }

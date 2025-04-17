@@ -59,5 +59,40 @@ namespace MoviesHub.Services.AuthAPI.Controllers
 
             return Ok(_responseDto);
         }
+
+        [HttpPost("assignrolewithDto")]
+        public async Task<IActionResult> AssignRoleWithDto([FromBody] RoleAssignmentDto roleAssignmentDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = "Información de asignación de rol incompleta";
+                return BadRequest(_responseDto);
+            }
+
+            var assignRole = await _authService.AssignRoleWithDto(roleAssignmentDto);
+            if (!assignRole)
+            {
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = "No se pudo asignar el rol";
+                return BadRequest(_responseDto);
+            }
+
+            _responseDto.IsSuccess = true;
+            _responseDto.Message = "Rol asignado exitosamente";
+            return Ok(_responseDto);
+        }
+
+        [HttpGet("users-with-roles")]
+        public async Task<IActionResult> GetUsersWithRoles()
+        {
+            var usersWithRoles = await _authService.GetUsersWithRoles();
+            _responseDto.Result = usersWithRoles;
+            _responseDto.IsSuccess = true;
+            return Ok(_responseDto);
+        }
+
+
+
     }
 }
