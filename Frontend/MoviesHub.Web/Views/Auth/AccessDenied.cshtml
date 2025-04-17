@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    <h2 class="card-title mb-3">@ViewData["Title"]</h2>
+                    <p class="card-text lead mb-4">
+                        You do not have permission to access this resource.
+                    </p>
+                    <hr class="my-4" />
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                            <i class="bi bi-house-fill me-2"></i>Return to Home Page
+                        </a>
+                        <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Login with Different Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Log access denied for analytics purposes
+        console.log("Access denied page visited");
+    </script>
+}

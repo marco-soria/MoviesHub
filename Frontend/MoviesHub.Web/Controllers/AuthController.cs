@@ -37,8 +37,14 @@ namespace MoviesHub.Web.Controllers
 
             if (responseDto != null && responseDto.IsSuccess)
             {
-                LoginResponseDto loginResponseDto =
-                    JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(responseDto.Result));
+                var resultObject = responseDto.Result as Newtonsoft.Json.Linq.JObject;
+                var innerResult = resultObject["result"] as Newtonsoft.Json.Linq.JObject;
+
+                LoginResponseDto loginResponseDto = new LoginResponseDto
+                {
+                    User = innerResult["user"]?.ToObject<UserDto>(),
+                    Token = innerResult["token"]?.ToString()
+                };
 
                 await SignUser(loginResponseDto);
                 _tokenProvider.SetToken(loginResponseDto.Token);
@@ -51,6 +57,101 @@ namespace MoviesHub.Web.Controllers
                 return View(loginRequestDto);
             }
         }
+
+        //[HttpPost]
+        //public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
+        //{
+        //    ResponseDto responseDto = await _authService.LoginAsync(loginRequestDto);
+
+        //    if (responseDto != null && responseDto.IsSuccess)
+        //    {
+        //        try
+        //        {
+        //            // Veamos exactamente qué contiene responseDto.Result
+        //            var resultJson = JsonConvert.SerializeObject(responseDto.Result);
+        //            Console.WriteLine($"ResponseDto.Result JSON: {resultJson}");
+
+        //            var resultObject = responseDto.Result as Newtonsoft.Json.Linq.JObject;
+
+        //            // Veamos todas las propiedades disponibles en el JObject
+        //            Console.WriteLine("Propiedades disponibles en resultObject:");
+        //            foreach (var property in resultObject.Properties())
+        //            {
+        //                Console.WriteLine($"- {property.Name}: {property.Value?.ToString()?.Substring(0, Math.Min(20, property.Value?.ToString().Length ?? 0))}...");
+        //            }
+
+        //            // Veamos si hay una propiedad "result" dentro de resultObject y qué contiene
+        //            if (resultObject["result"] != null)
+        //            {
+        //                Console.WriteLine("Propiedades dentro de resultObject['result']:");
+        //                var innerResult = resultObject["result"] as Newtonsoft.Json.Linq.JObject;
+        //                if (innerResult != null)
+        //                {
+        //                    foreach (var property in innerResult.Properties())
+        //                    {
+        //                        Console.WriteLine($"- {property.Name}: {property.Value?.ToString()?.Substring(0, Math.Min(20, property.Value?.ToString().Length ?? 0))}...");
+        //                    }
+        //                }
+        //            }
+
+        //            // Intentar acceder al token de varias maneras posibles
+        //            string token = null;
+
+        //            // Intento 1: Directo del objeto principal
+        //            token = resultObject["token"]?.ToString();
+        //            Console.WriteLine($"Intento 1 (token directo): {token?.Substring(0, Math.Min(10, token?.Length ?? 0)) ?? "null"}");
+
+        //            // Intento 2: A través de la propiedad result
+        //            if (token == null && resultObject["result"] != null)
+        //            {
+        //                token = resultObject["result"]["token"]?.ToString();
+        //                Console.WriteLine($"Intento 2 (token en result): {token?.Substring(0, Math.Min(10, token?.Length ?? 0)) ?? "null"}");
+        //            }
+
+        //            // Crear el LoginResponseDto con el token encontrado
+        //            LoginResponseDto loginResponseDto = new LoginResponseDto();
+
+        //            // Determinar cómo extraer el usuario según donde se encontró el token
+        //            if (token != null)
+        //            {
+        //                loginResponseDto.Token = token;
+
+        //                // Intentar obtener el usuario de manera similar
+        //                if (resultObject["user"] != null)
+        //                {
+        //                    loginResponseDto.User = resultObject["user"].ToObject<UserDto>();
+        //                }
+        //                else if (resultObject["result"] != null && resultObject["result"]["user"] != null)
+        //                {
+        //                    loginResponseDto.User = resultObject["result"]["user"].ToObject<UserDto>();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                Console.WriteLine("No se pudo encontrar el token en ninguna ubicación esperada");
+        //                TempData["error"] = "Error en la autenticación: token no encontrado";
+        //                return View(loginRequestDto);
+        //            }
+
+        //            await SignUser(loginResponseDto);
+        //            _tokenProvider.SetToken(loginResponseDto.Token);
+
+        //            return RedirectToAction("Index", "Home");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine($"Error en deserialización: {ex.Message}");
+        //            Console.WriteLine($"StackTrace: {ex.StackTrace}");
+        //            TempData["error"] = "Error en la autenticación: " + ex.Message;
+        //            return View(loginRequestDto);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        TempData["error"] = responseDto.Message;
+        //        return View(loginRequestDto);
+        //    }
+        //}
 
         [HttpGet]
         public IActionResult Register()
@@ -135,7 +236,11 @@ namespace MoviesHub.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
 
 
 
