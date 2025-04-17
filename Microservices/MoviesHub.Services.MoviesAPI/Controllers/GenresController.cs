@@ -4,6 +4,7 @@ using MoviesHub.Services.MoviesAPI.Data;
 using MoviesHub.Services.MoviesAPI.Models.Dto;
 using MoviesHub.Services.MoviesAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MoviesHub.Services.MoviesAPI.Controllers
 {
@@ -21,8 +22,9 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
             _mapper = mapper;
             _logger = logger;
         }
-
+        
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<ResponseDto>> GetGenres()
         {
             var response = new ResponseDto();
