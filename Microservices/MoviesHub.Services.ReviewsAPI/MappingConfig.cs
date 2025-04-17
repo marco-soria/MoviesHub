@@ -14,7 +14,7 @@ namespace MoviesHub.Services.ReviewsAPI
                 config.CreateMap<Review, ReviewDto>().ReverseMap();
                 config.CreateMap<Review, ReviewCreateDto>().ReverseMap();
                 config.CreateMap<Review, ReviewUpdateDto>().ReverseMap();
-                config.CreateMap<Review, ReviewResponseDto>().ReverseMap();
+               
 
                 
             });
