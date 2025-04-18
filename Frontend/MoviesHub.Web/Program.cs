@@ -20,6 +20,7 @@ builder.Services.AddHttpClient<IBaseService, BaseService>();
 builder.Services.AddHttpClient<IMovieGenreService, MovieGenreService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddHttpClient<IReviewService, ReviewService>();
+builder.Services.AddHttpClient<IUserService, UserService>();
 
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<IBaseService, BaseService>();
@@ -28,6 +29,7 @@ builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IMovieGenreService, MovieGenreService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

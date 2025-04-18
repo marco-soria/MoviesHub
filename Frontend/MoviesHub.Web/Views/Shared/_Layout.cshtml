@@ -37,11 +37,15 @@
                                 <li><a class="dropdown-item" asp-controller="Genre" asp-action="Index">Genres</a></li>
                                 <li><a class="dropdown-item" asp-controller="MovieGenre" asp-action="Index">Movie-Genre</a></li>
                                 <li><a class="dropdown-item" asp-controller="Review" asp-action="Index">Reviews</a></li>
+                                <li><a class="dropdown-item" asp-controller="User" asp-action="Index">Users</a></li>
+
 
                                 <li><a class="dropdown-item" asp-controller="Role" asp-action="AssignRole">Administrar Roles</a></li>
                                 <li><a class="dropdown-item" asp-controller="Movie" asp-action="DeletedMovies">Deleted Movies</a></li>
                                 <li><a class="dropdown-item" asp-controller="Genre" asp-action="DeletedGenres">Deleted Genres</a></li>
                                 <li><a class="dropdown-item" asp-controller="Review" asp-action="DeletedReviews">Deleted Reviews</a></li>
+                              
+
                                 <li><hr class="dropdown-divider"></li>
                             </ul>
                         </li>
@@ -83,7 +87,7 @@
 
     <footer class="footer text-muted">
         <div class="container">
-            &copy; 2025 - MoviesHub.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; @DateTime.Now.Year - MoviesHub.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

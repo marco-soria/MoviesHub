@@ -1,0 +1,82 @@
+﻿@using MoviesHub.Web.Utility
+@model UserRequestDto
+@{
+    ViewData["Title"] = "Crear Usuario";
+}
+
+<div class="container p-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow border-0 mt-4">
+                <div class="card-header bg-primary bg-gradient ml-0 py-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="text-white">Crear Usuario</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" class="row">
+                        <div class="border p-3">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                            <div class="form-floating py-2 col-12">
+                                <input asp-for="Email" class="form-control" aria-required="true" />
+                                <label asp-for="Email" class="ms-2">Email</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating py-2 col-12">
+                                <input asp-for="FirstName" class="form-control" aria-required="true" />
+                                <label asp-for="FirstName" class="ms-2">Nombre</label>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating py-2 col-12">
+                                <input asp-for="LastName" class="form-control" aria-required="true" />
+                                <label asp-for="LastName" class="ms-2">Apellido</label>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating py-2 col-12">
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <label asp-for="PhoneNumber" class="ms-2">Teléfono</label>
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating py-2 col-12">
+                                <input asp-for="Password" class="form-control" type="password" />
+                                <label asp-for="Password" class="ms-2">Contraseña</label>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating py-2 col-12">
+                                <select asp-for="Role" class="form-select">
+                                    <option value="" disabled selected>--Seleccionar Rol--</option>
+                                    <option value="@SD.RoleAdmin">Admin</option>
+                                    <option value="@SD.RoleManager">Managerr</option>
+                                    <option value="@SD.RoleUser">User</option>
+                                </select>
+                                <label asp-for="Role" class="ms-2">Rol</label>
+                                <span asp-validation-for="Role" class="text-danger"></span>
+                            </div>
+
+                            <div class="row pt-2">
+                                <div class="col-6 col-md-3">
+                                    <button type="submit" class="btn btn-primary form-control">Crear</button>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <a asp-action="Index" class="btn btn-secondary form-control">Volver</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

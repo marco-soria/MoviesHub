@@ -1,0 +1,94 @@
+﻿@model List<UserResponseDto>
+@{
+    ViewData["Title"] = "Administración de Usuarios";
+}
+
+<div class="container p-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow border-0 mt-4">
+                <div class="card-header bg-primary bg-gradient ml-0 py-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <h2 class="text-white">Lista de Usuarios</h2>
+                        </div>
+                        <div class="col-6 text-end">
+                            <a asp-action="Create" class="btn btn-sm btn-success"><i class="bi bi-plus-circle"></i> Crear Usuario</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        @if (ViewBag.IncludeDeleted == true)
+                        {
+                            <a asp-action="Index" asp-route-includeDeleted="false" class="btn btn-outline-primary">Mostrar Solo Activos</a>
+                        }
+                        else
+                        {
+                            <a asp-action="Index" asp-route-includeDeleted="true" class="btn btn-outline-secondary">Incluir Eliminados</a>
+                        }
+                    </div>
+
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Roles</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr class="@(user.IsDeleted ? "table-danger" : "")">
+                                    <td>@user.Email</td>
+                                    <td>@user.FirstName</td>
+                                    <td>@user.LastName</td>
+                                    <td>@string.Join(", ", user.Roles)</td>
+                                    <td>
+                                        @if (user.IsDeleted)
+                                        {
+                                            <span class="badge bg-danger">Eliminado</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">Activo</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            @if (!user.IsDeleted)
+                                            {
+                                                <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning btn-sm">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <form asp-action="Restore" method="post" class="d-inline">
+                                                    <input type="hidden" name="id" value="@user.Id" />
+                                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('¿Está seguro que desea restaurar este usuario?')">
+                                                        <i class="bi bi-arrow-counterclockwise"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,95 @@
+﻿@model UserResponseDto
+@{
+    ViewData["Title"] = "Detalles de Usuario";
+}
+
+<div class="container p-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow border-0 mt-4">
+                <div class="card-header bg-primary bg-gradient ml-0 py-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="text-white">Detalles del Usuario</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="border p-3">
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Email:</div>
+                            <div class="col-8">@Model.Email</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Nombre:</div>
+                            <div class="col-8">@Model.FirstName</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Apellido:</div>
+                            <div class="col-8">@Model.LastName</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Teléfono:</div>
+                            <div class="col-8">@(Model.PhoneNumber ?? "-")</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Roles:</div>
+                            <div class="col-8">@string.Join(", ", Model.Roles)</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Fecha de creación:</div>
+                            <div class="col-8">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Estado:</div>
+                            <div class="col-8">
+                                @if (Model.IsDeleted)
+                                {
+                                    <span class="badge bg-danger">Eliminado</span>
+                                    <span>el @Model.DeletedAt?.ToString("dd/MM/yyyy HH:mm")</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between mt-4">
+                                    <div>
+                                        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+                                    </div>
+                                    <div>
+                                        @if (!Model.IsDeleted)
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+                                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Eliminar</a>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="Restore" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@Model.Id" />
+                                                <button type="submit" class="btn btn-success"
+                                                        onclick="return confirm('¿Está seguro que desea restaurar este usuario?')">
+                                                    Restaurar Usuario
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+﻿@model UserResponseDto
+@{
+    ViewData["Title"] = "Eliminar Usuario";
+}
+
+<div class="container p-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow border-0 mt-4">
+                <div class="card-header bg-danger bg-gradient ml-0 py-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="text-white">Eliminar Usuario</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="border p-3">
+                        <div class="alert alert-danger">
+                            <h5>¿Está seguro que desea eliminar este usuario?</h5>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Email:</div>
+                            <div class="col-8">@Model.Email</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Nombre completo:</div>
+                            <div class="col-8">@Model.FirstName @Model.LastName</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-4 fw-bold">Roles:</div>
+                            <div class="col-8">@string.Join(", ", Model.Roles)</div>
+                        </div>
+
+                        <form method="post">
+                            <input type="hidden" name="Id" value="@Model.Id" />
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="permanent" name="Permanent" value="true">
+                                <label class="form-check-label text-danger" for="permanent">
+                                    Eliminar permanentemente (esta acción no se puede deshacer)
+                                </label>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-danger form-control">Eliminar</button>
+                                </div>
+                                <div class="col-6">
+                                    <a asp-action="Index" class="btn btn-secondary form-control">Cancelar</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
