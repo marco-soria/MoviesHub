@@ -4,12 +4,18 @@ using MoviesHub.Services.AuthAPI.Data;
 using MoviesHub.Services.AuthAPI.Models;
 using MoviesHub.Services.AuthAPI.Services.IServices;
 using MoviesHub.Services.AuthAPI.Services;
-using System;
+using MoviesHub.Services.AuthAPI.Utility;
+using System.Net;
+using Polly;
+using Polly.Extensions.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 1. Servicios fundamentales
+builder.Services.AddControllers();
+builder.Services.AddSwaggerGen();
 
+// 2. Configuración de base de datos y autenticación
 builder.Services.AddDbContext<AuthDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -21,17 +27,48 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
 
+// 3. Servicios propios
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
-// Register UserService for CRUD operations
 builder.Services.AddScoped<IUserService, UserService>();
-
-builder.Services.AddControllers();
-
-builder.Services.AddSwaggerGen();
-
 builder.Services.AddScoped<DataInitializer>();
+
+// 4. Definición de políticas de resiliencia
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
+        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}
+
+static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
+}
+
+// 5. Configuración de autenticación para llamadas HTTP
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
+
+// 6. Configuración de HttpClient con políticas
+builder.Services.AddHttpClient("MoviesAPI", x => x.BaseAddress =
+    new Uri(builder.Configuration["ServiceUrls:MoviesAPI"]))
+    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>()
+    .AddPolicyHandler(GetRetryPolicy())
+    .AddPolicyHandler(GetCircuitBreakerPolicy());
+
+builder.Services.AddHttpClient("ReviewsAPI", x => x.BaseAddress =
+    new Uri(builder.Configuration["ServiceUrls:ReviewsAPI"]))
+    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>()
+    .AddPolicyHandler(GetRetryPolicy())
+    .AddPolicyHandler(GetCircuitBreakerPolicy());
+
+// 7. Servicios de API
+builder.Services.AddScoped<IMovieAPIService, MovieAPIService>();
+builder.Services.AddScoped<IReviewAPIService, ReviewAPIService>();
 
 var app = builder.Build();
 

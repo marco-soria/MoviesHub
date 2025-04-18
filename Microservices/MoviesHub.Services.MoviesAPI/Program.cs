@@ -5,12 +5,16 @@ using Microsoft.OpenApi.Models;
 using MoviesHub.Services.MoviesAPI;
 using MoviesHub.Services.MoviesAPI.Data;
 using MoviesHub.Services.MoviesAPI.Extensions;
+using MoviesHub.Services.MoviesAPI.Services;
+using MoviesHub.Services.MoviesAPI.Services.IServices;
 using MoviesHub.Services.MoviesAPI.Utility;
+using System.Net;
+using Polly;
+using Polly.Extensions.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// 1. Servicios fundamentales
 builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen(option =>
@@ -39,23 +43,55 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
-
-builder.Services.AddHttpClient("Reviews", x => x.BaseAddress =
-new Uri(builder.Configuration["ServiceUrls:ReviewsAPI"]))
-    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
-
-builder.AddAppAuthentication();
-builder.Services.AddAuthorization();
-
+// 2. Configuración de base de datos
 builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//AutoMapper
+// 3. Configuración de AutoMapper
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// 4. Definición de políticas de resiliencia
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
+        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}
+
+static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
+}
+
+// 5. Configuración de autenticación para llamadas HTTP
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
+
+// 6. Configuración de HttpClient con políticas
+builder.Services.AddHttpClient("AuthAPI", x => x.BaseAddress =
+    new Uri(builder.Configuration["ServiceUrls:AuthAPI"]))
+    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>()
+    .AddPolicyHandler(GetRetryPolicy())
+    .AddPolicyHandler(GetCircuitBreakerPolicy());
+
+builder.Services.AddHttpClient("ReviewsAPI", x => x.BaseAddress =
+    new Uri(builder.Configuration["ServiceUrls:ReviewsAPI"]))
+    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>()
+    .AddPolicyHandler(GetRetryPolicy())
+    .AddPolicyHandler(GetCircuitBreakerPolicy());
+
+// 7. Servicios de API
+builder.Services.AddScoped<IAuthAPIService, AuthAPIService>();
+builder.Services.AddScoped<IReviewAPIService, ReviewAPIService>();
+
+// 8. Configuración de autenticación y autorización
+builder.AddAppAuthentication();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -67,11 +103,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
