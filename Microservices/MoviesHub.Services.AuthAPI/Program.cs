@@ -24,6 +24,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Register UserService for CRUD operations
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen();

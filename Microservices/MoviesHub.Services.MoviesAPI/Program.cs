@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using MoviesHub.Services.MoviesAPI;
 using MoviesHub.Services.MoviesAPI.Data;
 using MoviesHub.Services.MoviesAPI.Extensions;
+using MoviesHub.Services.MoviesAPI.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,12 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
+
+builder.Services.AddHttpClient("Reviews", x => x.BaseAddress =
+new Uri(builder.Configuration["ServiceUrls:ReviewsAPI"]))
+    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
 builder.AddAppAuthentication();
 builder.Services.AddAuthorization();

@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using MoviesHub.Services.ReviewsAPI;
 using MoviesHub.Services.ReviewsAPI.Data;
 using MoviesHub.Services.ReviewsAPI.Extensions;
+using MoviesHub.Services.ReviewsAPI.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,16 @@ builder.Services.AddDbContext<ReviewDbContext>(options =>
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
+
+builder.Services.AddHttpClient("Movies", x => x.BaseAddress =
+new Uri(builder.Configuration["ServiceUrls:MoviesAPI"]))
+    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
+builder.Services.AddHttpClient("Auth", x => x.BaseAddress =
+new Uri(builder.Configuration["ServiceUrls:AuthAPI"]))
+    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
 builder.AddAppAuthentication();
 builder.Services.AddAuthorization();
