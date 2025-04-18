@@ -4,6 +4,8 @@ using MoviesHub.Services.MoviesAPI.Data;
 using MoviesHub.Services.MoviesAPI.Models.Dto;
 using MoviesHub.Services.MoviesAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using MoviesHub.Services.MoviesAPI.Services.IServices;
+
 
 namespace MoviesHub.Services.MoviesAPI.Controllers
 {
@@ -14,12 +16,18 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         private readonly MovieDbContext _db;
         private readonly IMapper _mapper;
         private readonly ILogger<MoviesController> _logger;
+        private readonly IReviewAPIService _reviewService;
 
-        public MoviesController(MovieDbContext db, IMapper mapper, ILogger<MoviesController> logger)
+        public MoviesController(
+            MovieDbContext db,
+            IMapper mapper,
+            ILogger<MoviesController> logger,
+            IReviewAPIService reviewService)
         {
             _db = db;
             _mapper = mapper;
             _logger = logger;
+            _reviewService = reviewService;
         }
 
         [HttpGet]
@@ -320,5 +328,95 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                 return StatusCode(500, response);
             }
         }
+
+        [HttpPost("{id:int}/update-rating")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ResponseDto>> UpdateMovieAverageRating(int id)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                _logger.LogInformation("Updating average rating for movie ID: {Id}", id);
+
+                var movie = await _db.Movies.FindAsync(id);
+                if (movie == null)
+                {
+                    _logger.LogWarning("Movie not found with ID: {Id}", id);
+                    response.IsSuccess = false;
+                    response.Message = "Movie not found";
+                    return NotFound(response);
+                }
+
+                decimal oldRating = movie.AverageRating; // Guardar el rating anterior
+
+                try
+                {
+                    // Intentar obtener el nuevo rating promedio desde ReviewsAPI
+                    double averageRating = await _reviewService.GetAverageRatingAsync(id);
+
+                    // Actualizar con el nuevo promedio
+                    movie.AverageRating = Convert.ToDecimal(averageRating);
+                    //movie.UpdatedAt = DateTime.UtcNow;
+
+                    _logger.LogInformation("Average rating updated for movie ID: {Id} from {OldRating} to {NewRating}",
+                        id, oldRating, movie.AverageRating);
+                }
+                catch (Exception ex)
+                {
+                    // Si falla la comunicación, mantener el rating anterior
+                    _logger.LogWarning(ex, "Failed to get average rating from ReviewsAPI for movie {Id}. Keeping existing rating {Rating}.",
+                        id, oldRating);
+                    // No cambiamos movie.AverageRating aquí, se mantiene el valor existente
+                }
+
+                await _db.SaveChangesAsync();
+
+                response.Result = movie;
+                response.Message = "Average rating update attempted";
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in update-rating endpoint for movie {Id}", id);
+                response.IsSuccess = false;
+                response.Message = "Error updating average rating";
+                response.ErrorMessages.Add(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+        [HttpGet("{id:int}/exists")]
+        public async Task<ActionResult<ResponseDto>> MovieExists(int id)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                var movieExists = await _db.Movies.AnyAsync(m => m.Id == id);
+
+                if (movieExists)
+                {
+                    response.Result = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    // Esto es importante: no devuelvas 404 o el Circuit Breaker se activará
+                    // En su lugar, devuelve 200 OK con un resultado false
+                    response.Result = false;
+                    return Ok(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking if movie with ID: {Id} exists", id);
+                response.IsSuccess = false;
+                response.Message = "Error checking if movie exists";
+                response.ErrorMessages = new List<string> { ex.Message };
+                return StatusCode(500, response);
+            }
+        }
+
     }
 }

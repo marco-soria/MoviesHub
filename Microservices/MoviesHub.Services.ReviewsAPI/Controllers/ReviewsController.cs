@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MoviesHub.Services.ReviewsAPI.Data;
 using MoviesHub.Services.ReviewsAPI.Models;
 using MoviesHub.Services.ReviewsAPI.Models.Dto;
+using MoviesHub.Services.ReviewsAPI.Services.IServices;
 
 namespace MoviesHub.Services.ReviewsAPI.Controllers
 {
@@ -15,12 +16,21 @@ namespace MoviesHub.Services.ReviewsAPI.Controllers
         private readonly ReviewDbContext _db;
         private readonly IMapper _mapper;
         private readonly ILogger<ReviewsController> _logger;
+        private readonly IMovieAPIService _movieService;
+        private readonly IHttpClientFactory _httpClientFactory; // Para notificaciones
 
-        public ReviewsController(ReviewDbContext db, IMapper mapper, ILogger<ReviewsController> logger)
+        public ReviewsController(
+            ReviewDbContext db,
+            IMapper mapper,
+            ILogger<ReviewsController> logger,
+            IMovieAPIService movieService,
+            IHttpClientFactory httpClientFactory)
         {
             _db = db;
             _mapper = mapper;
             _logger = logger;
+            _movieService = movieService;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpGet]
@@ -85,17 +95,47 @@ namespace MoviesHub.Services.ReviewsAPI.Controllers
                     return BadRequest(response);
                 }
 
-                // Verificar si el usuario ya ha revisado esta película
-                if (await _db.Reviews.AnyAsync(r => r.MovieId == reviewCreateDto.MovieId && r.UserId == reviewCreateDto.UserId))
+                // Verificar si el usuario ya ha revisado esta película (incluyendo las eliminadas)
+                var existingReview = await _db.Reviews
+                    .IgnoreQueryFilters() // Incluir reseñas eliminadas
+                    .FirstOrDefaultAsync(r => r.MovieId == reviewCreateDto.MovieId && r.UserId == reviewCreateDto.UserId);
+
+                if (existingReview != null)
                 {
-                    response.IsSuccess = false;
-                    response.Message = "User has already reviewed this movie";
-                    return Conflict(response);
+                    if (!existingReview.IsDeleted)
+                    {
+                        // La reseña existe y no está borrada
+                        response.IsSuccess = false;
+                        response.Message = "User has already reviewed this movie";
+                        return Conflict(response);
+                    }
+                    else
+                    {
+                        // La reseña existe pero está borrada, podemos restaurarla con los nuevos datos
+                        existingReview.Comment = reviewCreateDto.Comment;
+                        existingReview.Rating = reviewCreateDto.Rating;
+                        existingReview.IsDeleted = false;
+                        existingReview.DeletedAt = null;
+                        existingReview.CreatedAt = DateTime.UtcNow; // Opcional: actualizar la fecha
+
+                        await _db.SaveChangesAsync();
+
+                        // Notificar a MoviesAPI sobre el cambio en calificaciones
+                        await NotifyMoviesAPIOfRatingChange(reviewCreateDto.MovieId);
+
+                        response.Result = _mapper.Map<ReviewDto>(existingReview);
+                        response.Message = "Review restored and updated successfully";
+                        return CreatedAtAction(nameof(GetReviewById), new { id = existingReview.Id }, response);
+                    }
                 }
 
+                // Si no existe una reseña para esta combinación de usuario y película
                 var review = _mapper.Map<Review>(reviewCreateDto);
                 await _db.Reviews.AddAsync(review);
                 await _db.SaveChangesAsync();
+
+                // Notificar a MoviesAPI sobre el cambio en calificaciones
+                await NotifyMoviesAPIOfRatingChange(reviewCreateDto.MovieId);
 
                 response.Result = _mapper.Map<ReviewDto>(review);
                 response.Message = "Review created successfully";
@@ -104,13 +144,15 @@ namespace MoviesHub.Services.ReviewsAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating review");
+                _logger.LogError(ex, "Error creating review: {Message}", ex.Message);
                 response.IsSuccess = false;
                 response.Message = "Error creating review";
                 response.ErrorMessages.Add(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
+
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ResponseDto>> UpdateReview(int id, [FromBody] ReviewUpdateDto reviewUpdateDto)
@@ -137,6 +179,9 @@ namespace MoviesHub.Services.ReviewsAPI.Controllers
                 _mapper.Map(reviewUpdateDto, review);
                 await _db.SaveChangesAsync();
 
+                // Notificar a MoviesAPI sobre el cambio en calificaciones
+                await NotifyMoviesAPIOfRatingChange(review.MovieId);
+
                 response.Message = "Review updated successfully";
                 return Ok(response);
             }
@@ -149,6 +194,7 @@ namespace MoviesHub.Services.ReviewsAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<ResponseDto>> DeleteReview(int id)
@@ -165,10 +211,15 @@ namespace MoviesHub.Services.ReviewsAPI.Controllers
                     return NotFound(response);
                 }
 
+                int movieId = review.MovieId; // Guardar el movieId antes del soft delete
+
                 // Soft delete
                 review.IsDeleted = true;
                 review.DeletedAt = DateTime.UtcNow;
                 await _db.SaveChangesAsync();
+
+                // Notificar a MoviesAPI sobre el cambio en calificaciones
+                await NotifyMoviesAPIOfRatingChange(movieId);
 
                 response.Message = "Review deleted successfully";
                 return Ok(response);
@@ -182,6 +233,7 @@ namespace MoviesHub.Services.ReviewsAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
 
         // Additional endpoint to restore a soft-deleted review
         [HttpPatch("{id:int}/restore")]
@@ -203,8 +255,10 @@ namespace MoviesHub.Services.ReviewsAPI.Controllers
 
                 review.IsDeleted = false;
                 review.DeletedAt = null;
-
                 await _db.SaveChangesAsync();
+
+                // Notificar a MoviesAPI sobre el cambio en calificaciones
+                await NotifyMoviesAPIOfRatingChange(review.MovieId);
 
                 response.Message = "Review restored successfully";
                 return Ok(response);
@@ -218,6 +272,7 @@ namespace MoviesHub.Services.ReviewsAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
 
         // Get reviews by movie ID
         [HttpGet("movie/{movieId:int}")]
@@ -314,5 +369,80 @@ namespace MoviesHub.Services.ReviewsAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
+        // En ReviewsController.cs de ReviewsAPI
+        [HttpGet("movie/{movieId:int}/average")]
+        public async Task<ActionResult<ResponseDto>> GetAverageRatingForMovie(int movieId)
+        {
+            var response = new ResponseDto();
+            try
+            {
+                _logger.LogInformation("Calculating average rating for movie ID: {MovieId}", movieId);
+
+                // Verificar si la película existe mediante el servicio de MovieAPI
+                bool movieExists = await _movieService.MovieExistsAsync(movieId);
+                if (!movieExists)
+                {
+                    _logger.LogWarning("Attempted to get average rating for non-existent movie ID: {MovieId}", movieId);
+                    response.IsSuccess = false;
+                    response.Message = "Movie not found";
+                    return NotFound(response);
+                }
+
+                // Obtener todas las reviews no eliminadas para esta película
+                var reviews = await _db.Reviews
+                    .Where(r => r.MovieId == movieId && !r.IsDeleted)
+                    .ToListAsync();
+
+                // Manejar el caso cuando no hay reviews (evitar DivideByZeroException)
+                if (reviews == null || !reviews.Any())
+                {
+                    _logger.LogInformation("No reviews found for movie ID: {MovieId}, returning 0", movieId);
+                    response.Result = 0.0;
+                    return Ok(response);
+                }
+
+                // Calcular el promedio de forma segura
+                double average = reviews.Average(r => (double)r.Rating);
+
+                // Redondear a 2 decimales
+                average = Math.Round(average, 2);
+
+                _logger.LogInformation("Average rating for movie ID: {MovieId} is {Rating}", movieId, average);
+                response.Result = average;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating average rating for movie {MovieId}", movieId);
+                response.IsSuccess = false;
+                response.Message = "Error calculating average rating";
+                response.ErrorMessages.Add(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+        private async Task NotifyMoviesAPIOfRatingChange(int movieId)
+        {
+            try
+            {
+                _logger.LogInformation("Notifying MoviesAPI about rating change for movie ID: {MovieId}", movieId);
+
+                // Usar directamente IMovieAPIService para notificar
+                bool success = await _movieService.NotifyRatingChangeAsync(movieId);
+
+                if (!success)
+                {
+                    _logger.LogWarning("Failed to notify MoviesAPI about rating change for movie ID: {MovieId}", movieId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error notifying MoviesAPI about rating change for movie {MovieId}", movieId);
+                // No lanzamos la excepción para no afectar el flujo principal
+            }
+        }
+
+
     }
 }
