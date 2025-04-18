@@ -1,5 +1,5 @@
 ﻿using MoviesHub.Web.Models;
-using MoviesHub.Web.Service.IServices;
+using MoviesHub.Web.Services.IServices;
 using Newtonsoft.Json;
 using static MoviesHub.Web.Utility.SD;
 using System.Net;

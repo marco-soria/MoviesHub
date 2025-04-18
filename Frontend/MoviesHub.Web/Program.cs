@@ -1,8 +1,7 @@
-using MoviesHub.Web.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using MoviesHub.Web.Service.IServices;
 using MoviesHub.Web.Services;
 using MoviesHub.Web.Services.IServices;
+using MoviesHub.Web.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 

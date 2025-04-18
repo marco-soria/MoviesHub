@@ -1,6 +1,6 @@
 ﻿using MoviesHub.Web.Models;
 
-namespace MoviesHub.Web.Service.IServices
+namespace MoviesHub.Web.Services.IServices
 {
     public interface IGenreService
     {

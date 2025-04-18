@@ -1,4 +1,4 @@
-﻿using MoviesHub.Web.Service.IServices;
+﻿using MoviesHub.Web.Services.IServices;
 using MoviesHub.Web.Utility;
 
 namespace MoviesHub.Web.Services

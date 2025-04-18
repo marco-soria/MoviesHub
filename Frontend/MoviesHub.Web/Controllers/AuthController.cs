@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using MoviesHub.Web.Models;
-using MoviesHub.Web.Service.IServices;
 using MoviesHub.Web.Services.IServices;
 using MoviesHub.Web.Utility;
-using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -153,7 +150,7 @@ namespace MoviesHub.Web.Controllers
         //    }
         //}
 
-        
+
 
         [HttpGet]
         public IActionResult Register()
@@ -275,7 +272,7 @@ namespace MoviesHub.Web.Controllers
             return View();
         }
 
-       
+
 
         [HttpGet]
         public IActionResult AssignRole()
