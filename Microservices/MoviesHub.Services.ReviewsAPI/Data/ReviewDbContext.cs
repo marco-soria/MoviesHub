@@ -44,7 +44,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 1,
                     MovieId = 1,
-                    UserId = "3",
+                    UserId = "c9432eec-5211-4fea-92d5-0e4c5051b400",
                     Comment = "The Dark Knight redefines what a superhero movie can be.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-02-01"),
@@ -54,7 +54,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 2,
                     MovieId = 2,
-                    UserId = "4",
+                    UserId = "43e64e02-5e76-4fce-9de1-a70b7fd0d09e",
                     Comment = "Inception bends your mind with its dream concept.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-02-02"),
@@ -65,7 +65,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 3, 
                     MovieId = 3, 
-                    UserId = "5", 
+                    UserId = "f11cc463-949c-4830-aac5-263b3a693196", 
                     Comment = "Mad Max delivers non-stop adrenaline with its spectacular practical effects.", 
                     Rating = 8, 
                     CreatedAt = DateTime.Parse("2023-02-03"),
@@ -76,7 +76,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 4, 
                     MovieId = 4, 
-                    UserId = "6", 
+                    UserId = "90ade873-1fc8-40d3-be3e-01f5197a55c1", 
                     Comment = "John Wick revolutionized action choreography. Keanu Reeves at his best.", 
                     Rating = 10, 
                     CreatedAt = DateTime.Parse("2023-02-04"),
@@ -87,7 +87,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 5, 
                     MovieId = 5, 
-                    UserId = "7", 
+                    UserId = "f6794794-b49c-46a3-800e-b14fcd7a6c70", 
                     Comment = "The Avengers set the standard for team-up superhero movies.", 
                     Rating = 8, 
                     CreatedAt = DateTime.Parse("2023-02-05"),
@@ -98,7 +98,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 6, 
                     MovieId = 6, 
-                    UserId = "8", 
+                    UserId = "9d5bfc5e-288b-42f0-9352-8e6a7be763c0", 
                     Comment = "Black Panther's cultural significance matches its cinematic excellence.", 
                     Rating = 10, 
                     CreatedAt = DateTime.Parse("2023-02-06") ,
@@ -110,7 +110,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 7, 
                     MovieId = 7, 
-                    UserId = "9", 
+                    UserId = "41698a91-01fd-4910-a68f-58fc1ccf58c7", 
                     Comment = "Superbad captures teenage awkwardness perfectly. Endlessly quotable.", 
                     Rating = 8, 
                     CreatedAt = DateTime.Parse("2023-02-07"),
@@ -121,7 +121,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 8, 
                     MovieId = 8, 
-                    UserId = "10", 
+                    UserId = "ae8240fe-8ab1-4816-a2f9-24e8e40e5e3e", 
                     Comment = "The Hangover created a new template for raunchy comedies.", 
                     Rating = 8, 
                     CreatedAt = DateTime.Parse("2023-02-08"),
@@ -132,7 +132,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 9, 
                     MovieId = 9, 
-                    UserId = "3", 
+                    UserId = "c9432eec-5211-4fea-92d5-0e4c5051b400", 
                     Comment = "Bridesmaids proves women can headline hilarious R-rated comedies.", 
                     Rating = 8, 
                     CreatedAt = DateTime.Parse("2023-02-09"),
@@ -143,7 +143,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 10, 
                     MovieId = 10, 
-                    UserId = "4", 
+                    UserId = "43e64e02-5e76-4fce-9de1-a70b7fd0d09e", 
                     Comment = "Deadpool breaks the fourth wall with perfect comedic timing.", 
                     Rating = 10, 
                     CreatedAt = DateTime.Parse("2023-02-10"),
@@ -154,7 +154,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 11, 
                     MovieId = 11, 
-                    UserId = "5", 
+                    UserId = "f11cc463-949c-4830-aac5-263b3a693196", 
                     Comment = "Wes Anderson's signature style shines in Grand Budapest Hotel.",
                     Rating = 10, 
                     CreatedAt = DateTime.Parse("2023-02-11"),
@@ -165,7 +165,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 12, 
                     MovieId = 12, 
-                    UserId = "6", 
+                    UserId = "90ade873-1fc8-40d3-be3e-01f5197a55c1", 
                     Comment = "Booksmart is the smart, heartfelt teen comedy we needed.", 
                     Rating = 8, 
                     CreatedAt = DateTime.Parse("2023-02-12"),
@@ -177,7 +177,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 13, 
                     MovieId = 13, 
-                    UserId = "7", 
+                    UserId = "f6794794-b49c-46a3-800e-b14fcd7a6c70", 
                     Comment = "The Social Network's razor-sharp dialogue makes tech history thrilling.", 
                     Rating = 10, 
                     CreatedAt = DateTime.Parse("2023-02-13"),
@@ -188,7 +188,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 14, 
                     MovieId = 14, 
-                    UserId = "8", 
+                    UserId = "9d5bfc5e-288b-42f0-9352-8e6a7be763c0", 
                     Comment = "12 Years a Slave is a brutal, essential American story.", 
                     Rating = 10, 
                     CreatedAt = DateTime.Parse("2023-02-14"),
@@ -199,7 +199,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 15,
                     MovieId = 15, 
-                    UserId = "9", 
+                    UserId = "41698a91-01fd-4910-a68f-58fc1ccf58c7", 
                     Comment = "Parasite masterfully blends genres while delivering social commentary.", 
                     Rating = 10, 
                     CreatedAt = DateTime.Parse("2023-02-15"),
@@ -210,7 +210,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 16, 
                     MovieId = 16, 
-                    UserId = "10", 
+                    UserId = "ae8240fe-8ab1-4816-a2f9-24e8e40e5e3e", 
                     Comment = "La La Land's magical realism makes it an instant classic.",
                     Rating = 10, 
                     CreatedAt = DateTime.Parse("2023-02-16"),
@@ -221,7 +221,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 17,
                     MovieId = 17, 
-                    UserId = "3", 
+                    UserId = "c9432eec-5211-4fea-92d5-0e4c5051b400", 
                     Comment = "The King's Speech proves great acting can make any subject compelling.", 
                     Rating = 8, 
                     CreatedAt = DateTime.Parse("2023-02-17"),
@@ -232,7 +232,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 18, 
                     MovieId = 18, 
-                    UserId = "4", 
+                    UserId = "43e64e02-5e76-4fce-9de1-a70b7fd0d09e", 
                     Comment = "Moonlight's intimate storytelling is profoundly moving.", 
                     Rating = 7, 
                     CreatedAt = DateTime.Parse("2023-02-18"),
@@ -244,7 +244,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 19, 
                     MovieId = 19, 
-                    UserId = "5", 
+                    UserId = "f11cc463-949c-4830-aac5-263b3a693196", 
                     Comment = "Get Out blends horror and social satire perfectly.", 
                     Rating = 9, 
                     CreatedAt = DateTime.Parse("2023-02-19"),
@@ -255,7 +255,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 20,
                     MovieId = 20, 
-                    UserId = "6",
+                    UserId = "90ade873-1fc8-40d3-be3e-01f5197a55c1",
                     Comment = "Hereditary builds dread like few modern horror films.", 
                     Rating = 8, 
                     CreatedAt = DateTime.Parse("2023-02-20"),
@@ -266,7 +266,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 21, 
                     MovieId = 21, 
-                    UserId = "7", 
+                    UserId = "f6794794-b49c-46a3-800e-b14fcd7a6c70", 
                     Comment = "A Quiet Place's sound design creates incredible tension.", 
                     Rating = 8, 
                     CreatedAt = DateTime.Parse("2023-02-21"),
@@ -277,7 +277,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 { 
                     Id = 22, 
                     MovieId = 22, 
-                    UserId = "8", 
+                    UserId = "9d5bfc5e-288b-42f0-9352-8e6a7be763c0", 
                     Comment = "The Conjuring sets new standards for supernatural horror.", 
                     Rating = 8, 
                     CreatedAt = DateTime.Parse("2023-02-22"),
@@ -288,7 +288,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 23,
                     MovieId = 23,
-                    UserId = "9",
+                    UserId = "41698a91-01fd-4910-a68f-58fc1ccf58c7",
                     Comment = "It revitalizes Stephen King adaptations with great scares.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-02-23"),
@@ -298,7 +298,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 24,
                     MovieId = 24,
-                    UserId = "10",
+                    UserId = "ae8240fe-8ab1-4816-a2f9-24e8e40e5e3e",
                     Comment = "The Babadook uses horror to explore grief brilliantly.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-02-24"),
@@ -310,7 +310,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 25,
                     MovieId = 25,
-                    UserId = "3",
+                    UserId = "c9432eec-5211-4fea-92d5-0e4c5051b400",
                     Comment = "Interstellar's cosmic ambition matches its emotional depth.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-02-25"),
@@ -320,7 +320,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 26,
                     MovieId = 26,
-                    UserId = "4",
+                    UserId = "43e64e02-5e76-4fce-9de1-a70b7fd0d09e",
                     Comment = "Arrival's linguistic sci-fi approach is refreshingly original.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-02-26"),
@@ -330,7 +330,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 27,
                     MovieId = 27,
-                    UserId = "5",
+                    UserId = "f11cc463-949c-4830-aac5-263b3a693196",
                     Comment = "Blade Runner 2049 lives up to the original's legacy.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-02-27"),
@@ -340,7 +340,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 28,
                     MovieId = 28,
-                    UserId = "6",
+                    UserId = "90ade873-1fc8-40d3-be3e-01f5197a55c1",
                     Comment = "The Martian makes science exciting and accessible.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-02-28"),
@@ -350,7 +350,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 29,
                     MovieId = 29,
-                    UserId = "7",
+                    UserId = "f6794794-b49c-46a3-800e-b14fcd7a6c70",
                     Comment = "Ex Machina offers a chilling look at AI.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-01"),
@@ -360,7 +360,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 30,
                     MovieId = 30,
-                    UserId = "8",
+                    UserId = "9d5bfc5e-288b-42f0-9352-8e6a7be763c0",
                     Comment = "Gravity is a visually stunning survival story.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-02"),
@@ -372,7 +372,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 31,
                     MovieId = 31,
-                    UserId = "9",
+                    UserId = "41698a91-01fd-4910-a68f-58fc1ccf58c7",
                     Comment = "Mad Max: Fury Road redefines the action genre with relentless energy.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-03"),
@@ -382,7 +382,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 32,
                     MovieId = 32,
-                    UserId = "10",
+                    UserId = "ae8240fe-8ab1-4816-a2f9-24e8e40e5e3e",
                     Comment = "John Wick delivers stylish and intense action sequences.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-04"),
@@ -392,7 +392,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 33,
                     MovieId = 33,
-                    UserId = "3",
+                    UserId = "c9432eec-5211-4fea-92d5-0e4c5051b400",
                     Comment = "The Dark Knight blends superhero action with crime drama brilliantly.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-05"),
@@ -402,7 +402,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 34,
                     MovieId = 34,
-                    UserId = "4",
+                    UserId = "43e64e02-5e76-4fce-9de1-a70b7fd0d09e",
                     Comment = "Inception is an action-packed dreamscape like no other.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-06"),
@@ -412,7 +412,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 35,
                     MovieId = 35,
-                    UserId = "5",
+                    UserId = "f11cc463-949c-4830-aac5-263b3a693196",
                     Comment = "Skyfall delivers Bond's emotional depth with thrilling spectacle.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-07"),
@@ -422,7 +422,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 36,
                     MovieId = 36,
-                    UserId = "6",
+                    UserId = "90ade873-1fc8-40d3-be3e-01f5197a55c1",
                     Comment = "The Raid redefines close-quarters action choreography.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-08"),
@@ -434,7 +434,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 37,
                     MovieId = 37,
-                    UserId = "7",
+                    UserId = "f6794794-b49c-46a3-800e-b14fcd7a6c70",
                     Comment = "Inside Out is a masterclass in emotional storytelling.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-09"),
@@ -444,7 +444,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 38,
                     MovieId = 38,
-                    UserId = "8",
+                    UserId = "9d5bfc5e-288b-42f0-9352-8e6a7be763c0",
                     Comment = "Spider-Man: Into the Spider-Verse innovates animation and superhero films.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-10"),
@@ -454,7 +454,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 39,
                     MovieId = 39,
-                    UserId = "9",
+                    UserId = "41698a91-01fd-4910-a68f-58fc1ccf58c7",
                     Comment = "Coco is a vibrant, heartfelt celebration of family and culture.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-11"),
@@ -464,7 +464,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 40,
                     MovieId = 40,
-                    UserId = "10",
+                    UserId = "ae8240fe-8ab1-4816-a2f9-24e8e40e5e3e",
                     Comment = "Zootopia blends clever social commentary with adorable animation.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-12"),
@@ -474,7 +474,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 41,
                     MovieId = 41,
-                    UserId = "3",
+                    UserId = "c9432eec-5211-4fea-92d5-0e4c5051b400",
                     Comment = "Toy Story 3 delivers nostalgia and deep emotional impact.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-13"),
@@ -484,7 +484,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 42,
                     MovieId = 42,
-                    UserId = "4",
+                    UserId = "43e64e02-5e76-4fce-9de1-a70b7fd0d09e",
                     Comment = "Frozen charms with its memorable songs and strong characters.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-14"),
@@ -496,7 +496,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 43,
                     MovieId = 43,
-                    UserId = "5",
+                    UserId = "f11cc463-949c-4830-aac5-263b3a693196",
                     Comment = "The Grand Budapest Hotel is a visually delightful comedic adventure.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-15"),
@@ -506,7 +506,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 44,
                     MovieId = 44,
-                    UserId = "6",
+                    UserId = "90ade873-1fc8-40d3-be3e-01f5197a55c1",
                     Comment = "21 Jump Street is a hilarious and smart reboot.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-16"),
@@ -516,7 +516,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 45,
                     MovieId = 45,
-                    UserId = "7",
+                    UserId = "f6794794-b49c-46a3-800e-b14fcd7a6c70",
                     Comment = "Bridesmaids brings heartfelt humor with a brilliant ensemble cast.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-17"),
@@ -526,7 +526,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 46,
                     MovieId = 46,
-                    UserId = "8",
+                    UserId = "9d5bfc5e-288b-42f0-9352-8e6a7be763c0",
                     Comment = "The Hangover delivers outrageous laughs and unforgettable moments.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-18"),
@@ -536,7 +536,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 47,
                     MovieId = 47,
-                    UserId = "9",
+                    UserId = "41698a91-01fd-4910-a68f-58fc1ccf58c7",
                     Comment = "Superbad captures teenage awkwardness with hilarious accuracy.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-19"),
@@ -546,7 +546,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 48,
                     MovieId = 48,
-                    UserId = "10",
+                    UserId = "ae8240fe-8ab1-4816-a2f9-24e8e40e5e3e",
                     Comment = "Borat offers biting satire through its outrageous humor.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-20"),
@@ -558,7 +558,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 49,
                     MovieId = 49,
-                    UserId = "3",
+                    UserId = "c9432eec-5211-4fea-92d5-0e4c5051b400",
                     Comment = "Moonlight is a profound coming-of-age story with stunning performances.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-21"),
@@ -568,7 +568,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 50,
                     MovieId = 50,
-                    UserId = "4",
+                    UserId = "43e64e02-5e76-4fce-9de1-a70b7fd0d09e",
                     Comment = "The Social Network brilliantly captures the rise of Facebook.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-22"),
@@ -578,7 +578,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 51,
                     MovieId = 51,
-                    UserId = "5",
+                    UserId = "f11cc463-949c-4830-aac5-263b3a693196",
                     Comment = "La La Land dazzles with its nostalgic love story and music.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-23"),
@@ -588,7 +588,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 52,
                     MovieId = 52,
-                    UserId = "6",
+                    UserId = "90ade873-1fc8-40d3-be3e-01f5197a55c1",
                     Comment = "Whiplash is an electrifying portrayal of ambition and obsession.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-24"),
@@ -598,7 +598,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 53,
                     MovieId = 53,
-                    UserId = "7",
+                    UserId = "f6794794-b49c-46a3-800e-b14fcd7a6c70",
                     Comment = "The King's Speech is a stirring historical drama with powerful performances.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-25"),
@@ -608,7 +608,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 54,
                     MovieId = 54,
-                    UserId = "8",
+                    UserId = "9d5bfc5e-288b-42f0-9352-8e6a7be763c0",
                     Comment = "Slumdog Millionaire is an uplifting tale of love and destiny.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-26"),
@@ -620,7 +620,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 55,
                     MovieId = 55,
-                    UserId = "9",
+                    UserId = "41698a91-01fd-4910-a68f-58fc1ccf58c7",
                     Comment = "Gone Girl is a chilling, twisty psychological thriller.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-03-27"),
@@ -630,7 +630,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 56,
                     MovieId = 56,
-                    UserId = "10",
+                    UserId = "ae8240fe-8ab1-4816-a2f9-24e8e40e5e3e",
                     Comment = "Prisoners is a dark and gripping morality tale.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-28"),
@@ -640,7 +640,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 57,
                     MovieId = 57,
-                    UserId = "3",
+                    UserId = "c9432eec-5211-4fea-92d5-0e4c5051b400",
                     Comment = "Nightcrawler is a haunting dive into media ethics and ambition.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-29"),
@@ -650,7 +650,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 58,
                     MovieId = 58,
-                    UserId = "4",
+                    UserId = "43e64e02-5e76-4fce-9de1-a70b7fd0d09e",
                     Comment = "Shutter Island keeps audiences guessing until the end.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-30"),
@@ -660,7 +660,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 59,
                     MovieId = 59,
-                    UserId = "5",
+                    UserId = "f11cc463-949c-4830-aac5-263b3a693196",
                     Comment = "The Girl with the Dragon Tattoo is a chilling and complex mystery.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-03-31"),
@@ -670,7 +670,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 60,
                     MovieId = 60,
-                    UserId = "6",
+                    UserId = "90ade873-1fc8-40d3-be3e-01f5197a55c1",
                     Comment = "Sicario delivers unrelenting tension and stark moral ambiguity.",
                     Rating = 10,
                     CreatedAt = DateTime.Parse("2023-04-01"),
@@ -681,7 +681,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 61,
                     MovieId = 61,
-                    UserId = "3",
+                    UserId = "c9432eec-5211-4fea-92d5-0e4c5051b400",
                     Comment = "A fun return for Indiana Jones with exciting action sequences and nostalgic charm.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2023-07-15"),
@@ -691,7 +691,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 62,
                     MovieId = 62,
-                    UserId = "4",
+                    UserId = "43e64e02-5e76-4fce-9de1-a70b7fd0d09e",
                     Comment = "The Rock and Emily Blunt have great chemistry in this entertaining adventure inspired by the Disney ride.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2021-08-05"),
@@ -701,7 +701,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 63,
                     MovieId = 63,
-                    UserId = "5",
+                    UserId = "f11cc463-949c-4830-aac5-263b3a693196",
                     Comment = "Sandra Bullock and Channing Tatum make a hilarious duo in this jungle romp that doesn't take itself too seriously.",
                     Rating = 6,
                     CreatedAt = DateTime.Parse("2022-04-01"),
@@ -711,7 +711,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 64,
                     MovieId = 64,
-                    UserId = "6",
+                    UserId = "90ade873-1fc8-40d3-be3e-01f5197a55c1",
                     Comment = "Tom Holland brings his charm to this video game adaptation with plenty of treasure-hunting action.",
                     Rating = 6,
                     CreatedAt = DateTime.Parse("2022-02-20"),
@@ -721,7 +721,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 65,
                     MovieId = 65,
-                    UserId = "7",
+                    UserId = "f6794794-b49c-46a3-800e-b14fcd7a6c70",
                     Comment = "A surprisingly fun live-action adaptation that works for both kids and adults.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2019-08-15"),
@@ -731,7 +731,7 @@ namespace MoviesHub.Services.ReviewsAPI.Data
                 {
                     Id = 66,
                     MovieId = 66,
-                    UserId = "8",
+                    UserId = "9d5bfc5e-288b-42f0-9352-8e6a7be763c0",
                     Comment = "Ryan Reynolds shines in this heartfelt time-travel adventure with great action and humor.",
                     Rating = 8,
                     CreatedAt = DateTime.Parse("2022-03-15"),

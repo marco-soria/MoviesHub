@@ -167,10 +167,10 @@ namespace MoviesHub.Services.AuthAPI.Data
 
                 (new ApplicationUser
                 {
-                    UserName = "sarah@example.com",
-                    Email = "sarah@example.com",
-                    FirstName = "Sarah",
-                    LastName = "Davis",
+                    UserName = "sarita@gmail.com",
+                    Email = "sarita@gmail.com",
+                    FirstName = "sarita",
+                    LastName = "sarita",
                     CreatedAt = DateTime.Parse("2023-01-09"),
                     EmailConfirmed = true,
                     IsDeleted = false
