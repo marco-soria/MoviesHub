@@ -1,0 +1,57 @@
+@model ReviewCreateDto
+
+<form method="post">
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary">Create Review</h2>
+            <hr />
+        </div>
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="MovieId" class="form-label">Movie</label>
+            <select asp-for="MovieId" class="form-select">
+                <option selected disabled>Select Movie</option>
+                @if (ViewBag.Movies != null)
+                {
+                    foreach (var movie in ViewBag.Movies)
+                    {
+                        <option value="@movie.Id">@movie.Title</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="MovieId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="UserId" class="form-label">User ID</label>
+            <input asp-for="UserId" class="form-control" />
+            <span asp-validation-for="UserId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Rating" class="form-label">Rating (1-10)</label>
+            <input asp-for="Rating" type="number" min="1" max="10" class="form-control" />
+            <span asp-validation-for="Rating" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Comment" class="form-label">Comment</label>
+            <textarea asp-for="Comment" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="Comment" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <button type="submit" class="btn btn-primary" style="width:150px">Create</button>
+            </div>
+            <div class="col-6 text-end">
+                <a asp-controller="Review" asp-action="Index" class="btn btn-secondary" style="width:150px">Back to List</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

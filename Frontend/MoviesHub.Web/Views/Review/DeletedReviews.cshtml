@@ -1,0 +1,80 @@
+@model IEnumerable<ReviewDto>
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Deleted Reviews</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Review" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-arrow-left-circle"></i> Back to Active Reviews
+            </a>
+        </div>
+    </div>
+    <br />
+
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Movie ID</th>
+                <th>User ID</th>
+                <th>Comment</th>
+                <th>Rating</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td>@obj.Id</td>
+                    <td>@obj.MovieId</td>
+                    <td>@obj.UserId</td>
+                    <td>@obj.Comment</td>
+                    <td>@obj.Rating</td>
+                    <td>@obj.CreatedAt.ToShortDateString()</td>
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+                            <a href="#" class="btn btn-success mx-2" onclick="Restore(@obj.Id)">
+                                <i class="bi bi-arrow-counterclockwise"></i> Restore
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Restore Confirmation Modal -->
+<div class="modal fade" id="restoreConfirmationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Restore</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to restore this review?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="restoreForm" asp-action="Restore" method="post">
+                    <input type="hidden" id="reviewIdToRestore" name="id" />
+                    <button type="submit" class="btn btn-success">Restore</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function Restore(id) {
+            document.getElementById("reviewIdToRestore").value = id;
+            new bootstrap.Modal(document.getElementById('restoreConfirmationModal')).show();
+        }
+    </script>
+}
