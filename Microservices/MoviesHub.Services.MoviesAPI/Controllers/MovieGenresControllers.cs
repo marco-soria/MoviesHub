@@ -4,6 +4,7 @@ using MoviesHub.Services.MoviesAPI.Data;
 using MoviesHub.Services.MoviesAPI.Models.Dto;
 using MoviesHub.Services.MoviesAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MoviesHub.Services.MoviesAPI.Controllers
 {
@@ -96,6 +97,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> CreateMovieGenre([FromBody] MovieGenreCreateDto dto)
         {
             var response = new ResponseDto();
@@ -169,6 +171,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
 
         [HttpDelete("{movieId:int}/{genreId:int}")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> DeleteMovieGenre(int movieId, int genreId)
         {
             var response = new ResponseDto();

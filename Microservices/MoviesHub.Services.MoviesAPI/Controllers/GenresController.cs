@@ -74,6 +74,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> CreateGenre([FromBody] GenreCreateDto genreCreateDto)
         {
             var response = new ResponseDto();
@@ -114,6 +115,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> UpdateGenre(int id, [FromBody] GenreUpdateDto genreUpdateDto)
         {
             var response = new ResponseDto();
@@ -160,6 +162,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> DeleteGenre(int id)
         {
             var response = new ResponseDto();
@@ -194,6 +197,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
 
         // Additional endpoint to restore a soft-deleted genre
         [HttpPatch("{id:int}/restore")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> RestoreGenre(int id)
         {
             var response = new ResponseDto();
@@ -264,6 +268,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
 
         [HttpGet("deleted")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> GetDeletedGenres()
         {
             var response = new ResponseDto();

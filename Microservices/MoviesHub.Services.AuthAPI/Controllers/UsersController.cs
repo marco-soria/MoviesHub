@@ -88,6 +88,7 @@ namespace MoviesHub.Services.AuthAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> CreateUser([FromBody] UserRequestDto userRequestDto)
         {
             try
@@ -114,6 +115,7 @@ namespace MoviesHub.Services.AuthAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UserRequestDto userRequestDto)
         {
             try
@@ -146,6 +148,7 @@ namespace MoviesHub.Services.AuthAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> DeleteUser(string id, [FromQuery] bool permanent = false)
         {
             try
@@ -174,6 +177,7 @@ namespace MoviesHub.Services.AuthAPI.Controllers
         }
 
         [HttpPost("{id}/restore")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> RestoreUser(string id)
         {
             try

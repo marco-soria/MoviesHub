@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MoviesHub.Services.AuthAPI.Models.Dto;
 using MoviesHub.Services.AuthAPI.Services.IServices;
@@ -47,6 +48,7 @@ namespace MoviesHub.Services.AuthAPI.Controllers
         }
 
         [HttpPost("assignrole")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> AssignRole([FromBody] RegistrationRequestDto registrationRequestDto)
         {
             var assignRole = await _authService.AssignRole(registrationRequestDto.Email, registrationRequestDto.Role);
@@ -61,6 +63,7 @@ namespace MoviesHub.Services.AuthAPI.Controllers
         }
 
         [HttpPost("assignrolewithDto")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> AssignRoleWithDto([FromBody] RoleAssignmentDto roleAssignmentDto)
         {
             if (!ModelState.IsValid)

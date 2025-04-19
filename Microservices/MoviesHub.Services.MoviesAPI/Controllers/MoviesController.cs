@@ -5,6 +5,7 @@ using MoviesHub.Services.MoviesAPI.Models.Dto;
 using MoviesHub.Services.MoviesAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using MoviesHub.Services.MoviesAPI.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace MoviesHub.Services.MoviesAPI.Controllers
@@ -88,6 +89,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> CreateMovie([FromBody] MovieCreateDto movieCreateDto)
         {
             var response = new ResponseDto();
@@ -144,6 +146,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> UpdateMovie(int id, [FromBody] MovieUpdateDto movieUpdateDto)
         {
             var response = new ResponseDto();
@@ -207,6 +210,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> DeleteMovie(int id)
         {
             var response = new ResponseDto();
@@ -242,6 +246,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
 
         // Additional endpoint to restore a soft-deleted movie
         [HttpPatch("{id:int}/restore")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> RestoreMovie(int id)
         {
             var response = new ResponseDto();
@@ -303,6 +308,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
         }
 
         [HttpGet("deleted")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<ResponseDto>> GetDeletedMovies()
         {
             var response = new ResponseDto();
