@@ -1,82 +1,393 @@
-﻿@model MoviesHub.Web.Models.MovieDto
-
+﻿@model MovieDetailsViewModel
 @{
-    ViewData["Title"] = "Movie Details";
+    ViewData["Title"] = Model.Movie?.Title ?? "Detalles de Película";
+
+    // Verificación robusta de autenticación
+    bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    string userId = null;
+    bool isAdmin = false;
+    bool isManager = false;
+
+    if (isAuthenticated)
+    {
+        userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        // Si no hay userId válido, consideramos que no está autenticado realmente
+        isAuthenticated = !string.IsNullOrEmpty(userId);
+
+        // Verificar roles para autorización
+        isAdmin = User.IsInRole(MoviesHub.Web.Utility.SD.RoleAdmin);
+        isManager = User.IsInRole(MoviesHub.Web.Utility.SD.RoleManager);
+    }
+
+    bool hasUserReview = ViewBag.UserReview != null;
+    ReviewDto userReview = ViewBag.UserReview as ReviewDto;
+    bool userHasDeletedReview = ViewBag.UserHasDeletedReview == true;
 }
 
-<div class="container p-3">
-    <div class="row pt-4">
-        <div class="col-md-10 offset-md-1">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    <h2 class="text-center">Movie Details</h2>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
-                            {
-                                <img src="@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Title">
-                            }
-                            else
-                            {
-                                <div class="bg-light d-flex justify-content-center align-items-center" style="height: 300px;">
-                                    <span class="text-muted">No Image</span>
-                                </div>
-                            }
-                        </div>
-                        <div class="col-md-8">
-                            <h3 class="mb-3">@Model.Title</h3>
-                            <dl class="row">
-                                <dt class="col-sm-3">Release Year</dt>
-                                <dd class="col-sm-9">@Model.ReleaseYear</dd>
+@if (Model.Movie != null)
+{
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Columna para la imagen -->
+            <div class="col-md-4">
+                <img src="@Model.Movie.ImageUrl" class="img-fluid rounded shadow" alt="@Model.Movie.Title" onerror="this.src='/images/placeholder.jpg'">
 
-                                <dt class="col-sm-3">Rating</dt>
-                                <dd class="col-sm-9">
-                                    <span class="badge bg-warning">@Model.AverageRating</span>
-                                </dd>
-
-                                <dt class="col-sm-3">Genres</dt>
-                                <dd class="col-sm-9">
-                                    @if (Model.GenreNames != null && Model.GenreNames.Any())
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Calificación</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="rating me-2">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    double convertedRating = Convert.ToDouble(Model.Movie.AverageRating) / 2;
+                                    if (i <= Math.Round(convertedRating))
                                     {
-                                        @foreach (var genre in Model.GenreNames)
-                                        {
-                                            <span class="badge bg-primary me-1">@genre</span>
-                                        }
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    }
+                                    else if (i - 0.5 <= convertedRating)
+                                    {
+                                        <i class="bi bi-star-half text-warning"></i>
                                     }
                                     else
                                     {
-                                        <span>No genres assigned</span>
+                                        <i class="bi bi-star text-warning"></i>
                                     }
-                                </dd>
-
-                                <dt class="col-sm-3">Created At</dt>
-                                <dd class="col-sm-9">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
-                            </dl>
-
-                            <div class="mb-3">
-                                <h5>Description</h5>
-                                <p>@Model.Description</p>
+                                }
                             </div>
+                            <span class="fw-bold">@Model.Movie.AverageRating.ToString("0.0")/10</span>
+                        </div>
 
-                            <div class="d-flex justify-content-between mb-3">
-                                <a asp-action="Index" class="btn btn-secondary">
-                                    <i class="bi bi-arrow-left"></i> Back to List
+                        <hr>
+
+                        <h5>¿Viste esta película?</h5>
+                        <!-- En la sección de calificación -->
+                        <div class="d-grid">
+                            @if (hasUserReview)
+                            {
+                                <button class="btn btn-outline-success mb-2" data-bs-toggle="modal" data-bs-target="#editReviewModal">
+                                    <i class="bi bi-pencil-square"></i> Editar tu reseña
+                                </button>
+                                <form asp-action="DeleteReview" asp-controller="Movie" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar tu reseña? Esta acción no se puede deshacer.')">
+                                    <input type="hidden" name="reviewId" value="@userReview.Id" />
+                                    <button type="submit" class="btn btn-outline-danger w-100 mb-2">
+                                        <i class="bi bi-trash"></i> Eliminar reseña
+                                    </button>
+                                </form>
+                            }
+                            else if (isAuthenticated)
+                            {
+                                <button class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#rateModal">
+                                    <i class="bi bi-star-fill"></i> Calificar esta película
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Movie", new { id = Model.Movie.Id })" class="btn btn-outline-primary mb-2">
+                                    <i class="bi bi-star-fill"></i> Inicia sesión para calificar
                                 </a>
-                                <div>
-                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary mx-1">
-                                        <i class="bi bi-pencil-square"></i> Edit
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger mx-1">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </a>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Columna para la información de la película -->
+            <div class="col-md-8">
+                <h1 class="mb-2">@Model.Movie.Title</h1>
+                <p class="text-muted">@Model.Movie.ReleaseYear</p>
+
+                <div class="mb-4">
+                    <h4>Sinopsis</h4>
+                    <p>@Model.Movie.Description</p>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h4>Géneros</h4>
+                        <p>
+                            @if (Model.Movie.GenreNames != null && Model.Movie.GenreNames.Any())
+                            {
+                                @string.Join(", ", Model.Movie.GenreNames)
+                            }
+                            else
+                            {
+                                <span>Sin información de géneros</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Año de estreno</h4>
+                        <p>@Model.Movie.ReleaseYear</p>
+                    </div>
+                </div>
+
+                <!-- Sección de reseñas -->
+                <div class="mt-5">
+                    <h3>Reseñas</h3>
+                    <hr>
+
+                    @if (Model.Reviews != null && Model.Reviews.Any())
+                    {
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="card-title mb-0">@review.UserName</h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rating me-2">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    double convertedRating = Convert.ToDouble(review.Rating) / 2;
+                                                    if (i <= Math.Round(convertedRating))
+                                                    {
+                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                    }
+                                                    else if (i - 0.5 <= convertedRating)
+                                                    {
+                                                        <i class="bi bi-star-half text-warning"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-star text-warning"></i>
+                                                    }
+                                                }
+                                            </div>
+
+                                            @* Admin/Manager controls for any review *@
+                                            @if (isAdmin || isManager || (isAuthenticated && review.UserId == userId))
+                                            {
+                                                <div class="dropdown ms-2">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="reviewActions@(review.Id)" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="bi bi-three-dots-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="reviewActions@(review.Id)">
+                                                        @if (review.UserId == userId || isAdmin || isManager)
+                                                        {
+                                                            <li>
+                                                                <button class="dropdown-item edit-review-btn"
+                                                                        data-review-id="@review.Id"
+                                                                        data-review-comment="@review.Comment"
+                                                                        data-review-rating="@review.Rating"
+                                                                        data-movie-id="@Model.Movie.Id"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#editAnyReviewModal">
+                                                                    <i class="bi bi-pencil"></i> Editar
+                                                                </button>
+                                                            </li>
+                                                        }
+                                                        <li>
+                                                            <form asp-action="DeleteReview" asp-controller="Movie" method="post" class="d-inline m-0 p-0" onsubmit="return confirm('¿Estás seguro de eliminar esta reseña?')">
+                                                                <input type="hidden" name="reviewId" value="@review.Id" />
+                                                                <button type="submit" class="dropdown-item text-danger">
+                                                                    <i class="bi bi-trash"></i> Eliminar
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <p class="card-text">@review.Comment</p>
+                                    <small class="text-muted">@review.CreatedAt.ToString("dd/MM/yyyy")</small>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <p>No hay reseñas disponibles. ¡Sé el primero en opinar sobre esta película!</p>
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Modal para calificar la película -->
+    @if (isAuthenticated)
+    {
+        <div class="modal fade" id="rateModal" tabindex="-1" aria-labelledby="rateModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rateModalLabel">Calificar @Model.Movie.Title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form asp-action="AddReview" asp-controller="Movie" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" name="MovieId" value="@Model.Movie.Id" />
+                            <input type="hidden" name="UserId" value="@userId" />
+
+                            <div class="mb-3">
+                                <label for="Rating" class="form-label">Calificación</label>
+                                <select id="Rating" name="Rating" class="form-select">
+                                    <option value="10">10 - Obra maestra</option>
+                                    <option value="9">9 - Excelente</option>
+                                    <option value="8">8 - Muy buena</option>
+                                    <option value="7">7 - Buena</option>
+                                    <option value="6">6 - Aceptable</option>
+                                    <option value="5">5 - Regular</option>
+                                    <option value="4">4 - Mala</option>
+                                    <option value="3">3 - Muy mala</option>
+                                    <option value="2">2 - Horrible</option>
+                                    <option value="1">1 - Pésima</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="Comment" class="form-label">Comentario</label>
+                                <textarea id="Comment" name="Comment" class="form-control" rows="4" placeholder="Comparte tu opinión sobre esta película..." required minlength="5"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Publicar reseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Modal para editar reseña existente -->
+    @if (hasUserReview)
+    {
+        <div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editReviewModalLabel">Editar reseña de @Model.Movie.Title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form asp-action="UpdateReview" asp-controller="Movie" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" name="id" value="@userReview.Id" />
+                            <input type="hidden" name="movieId" value="@Model.Movie.Id" />
+                            <input type="hidden" name="userId" value="@userId" />
+
+                            <div class="mb-3">
+                                <label for="rating" class="form-label">Calificación</label>
+                                <select id="rating" name="rating" class="form-select">
+                                    @{
+                                        var ratings = new[] {
+                            (10, "Obra maestra"),
+                            (9, "Excelente"),
+                            (8, "Muy buena"),
+                            (7, "Buena"),
+                            (6, "Aceptable"),
+                            (5, "Regular"),
+                            (4, "Mala"),
+                            (3, "Muy mala"),
+                            (2, "Horrible"),
+                            (1, "Pésima")
+                            };
+
+                                        foreach (var (value, description) in ratings)
+                                        {
+                                            bool isSelected = userReview.Rating == value;
+                                            if (isSelected)
+                                            {
+                                                <option value="@value" selected>@value - @description</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@value">@value - @description</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Comentario</label>
+                                <textarea id="comment" name="comment" class="form-control" rows="4" required minlength="5">@userReview.Comment</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Actualizar reseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Modal para editar cualquier reseña (admin/manager) -->
+    @if (isAdmin || isManager)
+    {
+        <div class="modal fade" id="editAnyReviewModal" tabindex="-1" aria-labelledby="editAnyReviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editAnyReviewModalLabel">Editar reseña</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form asp-action="UpdateReview" asp-controller="Movie" method="post" id="editAnyReviewForm">
+                        <div class="modal-body">
+                            <input type="hidden" id="adminEditReviewId" name="id" value="" />
+                            <input type="hidden" id="adminEditMovieId" name="movieId" value="@Model.Movie.Id" />
+
+                            <div class="mb-3">
+                                <label for="adminEditRating" class="form-label">Calificación</label>
+                                <select id="adminEditRating" name="rating" class="form-select">
+                                    <option value="10">10 - Obra maestra</option>
+                                    <option value="9">9 - Excelente</option>
+                                    <option value="8">8 - Muy buena</option>
+                                    <option value="7">7 - Buena</option>
+                                    <option value="6">6 - Aceptable</option>
+                                    <option value="5">5 - Regular</option>
+                                    <option value="4">4 - Mala</option>
+                                    <option value="3">3 - Muy mala</option>
+                                    <option value="2">2 - Horrible</option>
+                                    <option value="1">1 - Pésima</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="adminEditComment" class="form-label">Comentario</label>
+                                <textarea id="adminEditComment" name="comment" class="form-control" rows="4" required minlength="5"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Actualizar reseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="container mt-5">
+        <div class="alert alert-warning">
+            <h4>Película no encontrada</h4>
+            <p>Lo sentimos, no pudimos encontrar la película solicitada.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-2">Volver al inicio</a>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Script para cargar los datos del review en el modal de edición para admin/manager
+            $('.edit-review-btn').click(function() {
+                var reviewId = $(this).data('review-id');
+                var reviewComment = $(this).data('review-comment');
+                var reviewRating = $(this).data('review-rating');
+                var movieId = $(this).data('movie-id');
+
+                $('#adminEditReviewId').val(reviewId);
+                $('#adminEditMovieId').val(movieId);
+                $('#adminEditComment').val(reviewComment);
+                $('#adminEditRating').val(reviewRating);
+            });
+        });
+    </script>
+}

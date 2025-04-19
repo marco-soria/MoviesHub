@@ -314,53 +314,122 @@ namespace MoviesHub.Web.Controllers
         }
 
 
+        //    private async Task SignUser(LoginResponseDto loginResponseDto)
+        //    {
+        //        var handler = new JwtSecurityTokenHandler();
+
+        //        var jwt = handler.ReadJwtToken(loginResponseDto.Token);
+
+        //        var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        //        //standard claims
+        //        identity.AddClaim(new Claim(JwtRegisteredClaimNames.Email,
+        //            jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value));
+        //        identity.AddClaim(new Claim(JwtRegisteredClaimNames.Sub,
+        //            jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub).Value));
+        //        identity.AddClaim(new Claim(JwtRegisteredClaimNames.Name,
+        //            jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name).Value));
+
+        //        // Agregar claims para FirstName y LastName
+        //        var firstNameClaim = jwt.Claims.FirstOrDefault(x => x.Type == "firstName");
+        //        var lastNameClaim = jwt.Claims.FirstOrDefault(x => x.Type == "lastName");
+
+        //        if (firstNameClaim != null)
+        //        {
+        //            identity.AddClaim(new Claim("firstName", firstNameClaim.Value));
+        //        }
+
+        //        if (lastNameClaim != null)
+        //        {
+        //            identity.AddClaim(new Claim("lastName", lastNameClaim.Value));
+        //        }
+
+        //        // Asignar el email como ClaimTypes.Name (para User.Identity.Name)
+        //        identity.AddClaim(new Claim(ClaimTypes.Name,
+        //            jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Email).Value));
+
+        //        //identity.AddClaim(new Claim(ClaimTypes.Role,
+        //        //   jwt.Claims.FirstOrDefault(x => x.Type == "role").Value));
+        //        // Agregar roles
+        //        var roleClaims = jwt.Claims.Where(x => x.Type == "role" || x.Type == ClaimTypes.Role);
+        //        foreach (var roleClaim in roleClaims)
+        //        {
+        //            identity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+        //        }
+
+        //        var principal = new ClaimsPrincipal(identity);
+
+        //        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        //    }
+        //}
         private async Task SignUser(LoginResponseDto loginResponseDto)
         {
             var handler = new JwtSecurityTokenHandler();
 
-            var jwt = handler.ReadJwtToken(loginResponseDto.Token);
-
-            var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            //standard claims
-            identity.AddClaim(new Claim(JwtRegisteredClaimNames.Email,
-                jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value));
-            identity.AddClaim(new Claim(JwtRegisteredClaimNames.Sub,
-                jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub).Value));
-            identity.AddClaim(new Claim(JwtRegisteredClaimNames.Name,
-                jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name).Value));
-
-            // Agregar claims para FirstName y LastName
-            var firstNameClaim = jwt.Claims.FirstOrDefault(x => x.Type == "firstName");
-            var lastNameClaim = jwt.Claims.FirstOrDefault(x => x.Type == "lastName");
-
-            if (firstNameClaim != null)
+            try
             {
-                identity.AddClaim(new Claim("firstName", firstNameClaim.Value));
-            }
+                var jwt = handler.ReadJwtToken(loginResponseDto.Token);
 
-            if (lastNameClaim != null)
+                var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                // El claim sub contiene el ID del usuario - IMPORTANTE
+                var userIdClaim = jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub);
+                if (userIdClaim != null)
+                {
+                    // Agregar explícitamente como NameIdentifier para User.FindFirst(ClaimTypes.NameIdentifier)
+                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userIdClaim.Value));
+                }
+
+                // Email
+                var emailClaim = jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email);
+                if (emailClaim != null)
+                {
+                    identity.AddClaim(new Claim(JwtRegisteredClaimNames.Email, emailClaim.Value));
+                    identity.AddClaim(new Claim(ClaimTypes.Name, emailClaim.Value)); // Para User.Identity.Name
+                }
+
+                // Nombre de usuario
+                var nameClaim = jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name);
+                if (nameClaim != null)
+                {
+                    identity.AddClaim(new Claim(JwtRegisteredClaimNames.Name, nameClaim.Value));
+                }
+
+                // FirstName y LastName
+                var firstNameClaim = jwt.Claims.FirstOrDefault(x => x.Type == "firstName");
+                if (firstNameClaim != null)
+                {
+                    identity.AddClaim(new Claim("firstName", firstNameClaim.Value));
+                }
+
+                var lastNameClaim = jwt.Claims.FirstOrDefault(x => x.Type == "lastName");
+                if (lastNameClaim != null)
+                {
+                    identity.AddClaim(new Claim("lastName", lastNameClaim.Value));
+                }
+
+                // Roles
+                var roleClaims = jwt.Claims.Where(x => x.Type == "role" || x.Type == ClaimTypes.Role);
+                foreach (var roleClaim in roleClaims)
+                {
+                    identity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+                }
+
+                var principal = new ClaimsPrincipal(identity);
+
+                // Log de diagnóstico
+                Console.WriteLine($"Usuario autenticado. ID: {userIdClaim?.Value}, Email: {emailClaim?.Value}");
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            }
+            catch (Exception ex)
             {
-                identity.AddClaim(new Claim("lastName", lastNameClaim.Value));
+                Console.WriteLine($"Error en SignUser: {ex.Message}");
+                throw;
             }
-
-            // Asignar el email como ClaimTypes.Name (para User.Identity.Name)
-            identity.AddClaim(new Claim(ClaimTypes.Name,
-                jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Email).Value));
-
-            //identity.AddClaim(new Claim(ClaimTypes.Role,
-            //   jwt.Claims.FirstOrDefault(x => x.Type == "role").Value));
-            // Agregar roles
-            var roleClaims = jwt.Claims.Where(x => x.Type == "role" || x.Type == ClaimTypes.Role);
-            foreach (var roleClaim in roleClaims)
-            {
-                identity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
-            }
-
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
         }
-    }
 
+
+
+    }
 }

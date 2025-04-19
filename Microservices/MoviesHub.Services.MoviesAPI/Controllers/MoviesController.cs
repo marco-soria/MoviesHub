@@ -149,7 +149,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
             var response = new ResponseDto();
             try
             {
-                if (movieUpdateDto == null)
+                if (id <= 0 || movieUpdateDto == null)
                 {
                     response.IsSuccess = false;
                     response.Message = "Movie data is required";

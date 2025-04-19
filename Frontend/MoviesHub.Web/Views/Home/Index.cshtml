@@ -1,8 +1,69 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<MovieDto>
+@{
+    ViewData["Title"] = "MoviesHub - Descubre películas";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">Explora el mundo del cine</h1>
+            <p class="lead">Descubre las mejores películas y comparte tus opiniones con la comunidad.</p>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var movie in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow">
+                        <img src="@movie.ImageUrl" class="card-img-top movie-poster" alt="@movie.Title" onerror="this.src='/images/placeholder.jpg'">
+                        <div class="card-body">
+                            <h5 class="card-title">@movie.Title</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="rating">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        double convertedRating = Convert.ToDouble(movie.AverageRating) / 2;
+                                        if (i <= Math.Round(convertedRating))
+                                        {
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        }
+                                        else if (i - 0.5 <= convertedRating)
+                                        {
+                                            <i class="bi bi-star-half text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star text-warning"></i>
+                                        }
+                                    }
+                                    <span class="ms-1">(@movie.AverageRating.ToString("0.0"))</span>
+                                </div>
+                                <span class="text-muted">@movie.ReleaseYear</span>
+                            </div>
+                            <a asp-controller="Movie" asp-action="Details" asp-route-id="@movie.Id" class="btn btn-primary w-100">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <div class="alert alert-info">
+                    <h4>No hay películas disponibles</h4>
+                    <p>Vuelve más tarde para descubrir nuevo contenido.</p>
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
+<style>
+    .movie-poster {
+        height: 300px;
+        object-fit: cover;
+    }
+</style>
