@@ -6,6 +6,7 @@ using MoviesHub.Services.MoviesAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using MoviesHub.Services.MoviesAPI.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
+using MoviesHub.Services.MoviesAPI.Services;
 
 
 namespace MoviesHub.Services.MoviesAPI.Controllers
@@ -31,6 +32,30 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
             _reviewService = reviewService;
         }
 
+        //[HttpGet]
+        //public async Task<ActionResult<ResponseDto>> GetMovies()
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        _logger.LogInformation("Getting all movies");
+        //        var movies = await _db.Movies
+        //            .Include(m => m.MovieGenres)
+        //            .ThenInclude(mg => mg.Genre)
+        //            .ToListAsync();
+
+        //        response.Result = _mapper.Map<List<MovieDto>>(movies);
+        //        return Ok(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error getting all movies");
+        //        response.IsSuccess = false;
+        //        response.Message = "Error retrieving movies";
+        //        response.ErrorMessages = new List<string> { ex.Message };
+        //        return StatusCode(500, response);
+        //    }
+        //}
         [HttpGet]
         public async Task<ActionResult<ResponseDto>> GetMovies()
         {
@@ -42,6 +67,9 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                     .Include(m => m.MovieGenres)
                     .ThenInclude(mg => mg.Genre)
                     .ToListAsync();
+
+                // No actualizamos las calificaciones en este caso para no ralentizar la API
+                // Las calificaciones se actualizarán bajo demanda cuando se acceda a películas individuales
 
                 response.Result = _mapper.Map<List<MovieDto>>(movies);
                 return Ok(response);
@@ -55,6 +83,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                 return StatusCode(500, response);
             }
         }
+
 
         // En MoviesController.cs del servicio MoviesAPI
 
@@ -357,6 +386,66 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
             }
         }
 
+        //[HttpPost("{id:int}/update-rating")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<ActionResult<ResponseDto>> UpdateMovieAverageRating(int id)
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        _logger.LogInformation("Updating average rating for movie ID: {Id}", id);
+
+        //        var movie = await _db.Movies.FindAsync(id);
+        //        if (movie == null)
+        //        {
+        //            _logger.LogWarning("Movie not found with ID: {Id}", id);
+        //            response.IsSuccess = false;
+        //            response.Message = "Movie not found";
+        //            return NotFound(response);
+        //        }
+
+        //        decimal oldRating = movie.AverageRating;
+
+        //        try
+        //        {
+        //            // Obtener el nuevo rating promedio desde ReviewsAPI
+        //            double averageRating = await _reviewService.GetAverageRatingAsync(id);
+
+        //            // Actualizar con el nuevo promedio
+        //            movie.AverageRating = Convert.ToDecimal(averageRating);
+
+        //            _logger.LogInformation("Average rating updated for movie ID: {Id} from {OldRating} to {NewRating}",
+        //                id, oldRating, movie.AverageRating);
+
+        //            await _db.SaveChangesAsync();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            // Si falla la comunicación, registrar el error pero continuar
+        //            _logger.LogWarning(ex, "Failed to get average rating from ReviewsAPI for movie {Id}.", id);
+        //            response.IsSuccess = false;
+        //            response.Message = $"Error getting rating: {ex.Message}";
+        //            return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //        }
+
+        //        response.Result = movie.AverageRating;
+        //        response.Message = "Average rating updated successfully";
+        //        return Ok(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error in update-rating endpoint for movie {Id}", id);
+        //        response.IsSuccess = false;
+        //        response.Message = "Error updating average rating";
+        //        response.ErrorMessages.Add(ex.Message);
+        //        return StatusCode(StatusCodes.Status500InternalServerError, response);
+        //    }
+        //}
+
+        // En MoviesController.cs, modificar el método UpdateMovieAverageRating
+
         [HttpPost("{id:int}/update-rating")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -381,7 +470,13 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
 
                 try
                 {
-                    // Obtener el nuevo rating promedio desde ReviewsAPI
+                    // Invalidar la caché si estamos usando el servicio cacheado
+                    if (_reviewService is CachedReviewAPIService cachedService)
+                    {
+                        cachedService.InvalidateMovieRatingCache(id);
+                    }
+
+                    // Obtener el nuevo rating promedio desde ReviewsAPI (ahora con caché)
                     double averageRating = await _reviewService.GetAverageRatingAsync(id);
 
                     // Actualizar con el nuevo promedio

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.OpenApi.Models;
 using MoviesHub.Services.MoviesAPI;
 using MoviesHub.Services.MoviesAPI.Data;
@@ -16,6 +17,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // 1. Servicios fundamentales
 builder.Services.AddControllers();
+
+// Agregar caché en memoria
+builder.Services.AddMemoryCache();
 
 builder.Services.AddSwaggerGen(option =>
 {
@@ -87,7 +91,17 @@ builder.Services.AddHttpClient("ReviewsAPI", x => x.BaseAddress =
 
 // 7. Servicios de API
 builder.Services.AddScoped<IAuthAPIService, AuthAPIService>();
-builder.Services.AddScoped<IReviewAPIService, ReviewAPIService>();
+
+// Registrar el servicio ReviewAPIService como implementación concreta
+builder.Services.AddScoped<ReviewAPIService>();
+
+// Registrar el servicio cacheado como implementación de la interfaz
+builder.Services.AddScoped<IReviewAPIService>(provider => {
+    var originalService = provider.GetRequiredService<ReviewAPIService>();
+    var memoryCache = provider.GetRequiredService<IMemoryCache>();
+    var logger = provider.GetRequiredService<ILogger<CachedReviewAPIService>>();
+    return new CachedReviewAPIService(originalService, memoryCache, logger);
+});
 
 // 8. Configuración de autenticación y autorización
 builder.AddAppAuthentication();
