@@ -56,6 +56,8 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
             }
         }
 
+        // En MoviesController.cs del servicio MoviesAPI
+
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ResponseDto>> GetMovie(int id)
         {
@@ -75,6 +77,25 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                     return NotFound(response);
                 }
 
+                // Actualizar la calificación promedio desde ReviewsAPI
+                try
+                {
+                    double averageRating = await _reviewService.GetAverageRatingAsync(id);
+                    // Si el averageRating es diferente al actual, actualizar y guardar
+                    if (Math.Abs(Convert.ToDouble(movie.AverageRating) - averageRating) > 0.001)
+                    {
+                        _logger.LogInformation("Updating movie {Id} average rating from {OldRating} to {NewRating}",
+                            id, movie.AverageRating, averageRating);
+                        movie.AverageRating = Convert.ToDecimal(averageRating);
+                        await _db.SaveChangesAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Si falla obtener el rating, solo registrar el error pero continuar
+                    _logger.LogWarning(ex, "Failed to update average rating for movie {Id}", id);
+                }
+
                 response.Result = _mapper.Map<MovieDto>(movie);
                 return Ok(response);
             }
@@ -87,6 +108,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                 return StatusCode(500, response);
             }
         }
+
 
         [HttpPost]
         [Authorize(Roles = "Admin,Manager")]
@@ -355,32 +377,32 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                     return NotFound(response);
                 }
 
-                decimal oldRating = movie.AverageRating; // Guardar el rating anterior
+                decimal oldRating = movie.AverageRating;
 
                 try
                 {
-                    // Intentar obtener el nuevo rating promedio desde ReviewsAPI
+                    // Obtener el nuevo rating promedio desde ReviewsAPI
                     double averageRating = await _reviewService.GetAverageRatingAsync(id);
 
                     // Actualizar con el nuevo promedio
                     movie.AverageRating = Convert.ToDecimal(averageRating);
-                    //movie.UpdatedAt = DateTime.UtcNow;
 
                     _logger.LogInformation("Average rating updated for movie ID: {Id} from {OldRating} to {NewRating}",
                         id, oldRating, movie.AverageRating);
+
+                    await _db.SaveChangesAsync();
                 }
                 catch (Exception ex)
                 {
-                    // Si falla la comunicación, mantener el rating anterior
-                    _logger.LogWarning(ex, "Failed to get average rating from ReviewsAPI for movie {Id}. Keeping existing rating {Rating}.",
-                        id, oldRating);
-                    // No cambiamos movie.AverageRating aquí, se mantiene el valor existente
+                    // Si falla la comunicación, registrar el error pero continuar
+                    _logger.LogWarning(ex, "Failed to get average rating from ReviewsAPI for movie {Id}.", id);
+                    response.IsSuccess = false;
+                    response.Message = $"Error getting rating: {ex.Message}";
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
                 }
 
-                await _db.SaveChangesAsync();
-
-                response.Result = movie;
-                response.Message = "Average rating update attempted";
+                response.Result = movie.AverageRating;
+                response.Message = "Average rating updated successfully";
                 return Ok(response);
             }
             catch (Exception ex)
@@ -392,6 +414,8 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
+
 
         [HttpGet("{id:int}/exists")]
         public async Task<ActionResult<ResponseDto>> MovieExists(int id)
