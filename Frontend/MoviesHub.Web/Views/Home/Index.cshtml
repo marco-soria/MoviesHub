@@ -1,13 +1,13 @@
 ﻿@model List<MovieDto>
 @{
-    ViewData["Title"] = "MoviesHub - Descubre películas";
+    ViewData["Title"] = "MoviesHub";
 }
 
 <div class="container mt-4">
     <div class="row mb-4">
         <div class="col">
-            <h1 class="display-5">Explora el mundo del cine</h1>
-            <p class="lead">Descubre las mejores películas y comparte tus opiniones con la comunidad.</p>
+            <h1 class="display-5">Explore the World of Cinema</h1>
+            <p class="lead">Discover the best movies and share your opinions with the community..</p>
         </div>
     </div>
 
@@ -43,7 +43,7 @@
                                 </div>
                                 <span class="text-muted">@movie.ReleaseYear</span>
                             </div>
-                            <a asp-controller="Movie" asp-action="Details" asp-route-id="@movie.Id" class="btn btn-primary w-100">Ver Detalles</a>
+                            <a asp-controller="Movie" asp-action="Details" asp-route-id="@movie.Id" class="btn btn-primary w-100">Details</a>
                         </div>
                     </div>
                 </div>
@@ -53,8 +53,8 @@
         {
             <div class="col-12 text-center">
                 <div class="alert alert-info">
-                    <h4>No hay películas disponibles</h4>
-                    <p>Vuelve más tarde para descubrir nuevo contenido.</p>
+                    <h4>No movies available</h4>
+                    <p>Come back later to discover new content.</p>
                 </div>
             </div>
         }

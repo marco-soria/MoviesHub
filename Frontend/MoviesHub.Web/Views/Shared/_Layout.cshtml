@@ -45,7 +45,7 @@
                                     <li><a class="dropdown-item" asp-controller="User" asp-action="Index">Users</a></li>
 
 
-                                    <li><a class="dropdown-item" asp-controller="Role" asp-action="AssignRole">Administrar Roles</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Role" asp-action="AssignRole">Manage Roles</a></li>
                                     <li><a class="dropdown-item" asp-controller="Movie" asp-action="DeletedMovies">Deleted Movies</a></li>
                                     <li><a class="dropdown-item" asp-controller="Genre" asp-action="DeletedGenres">Deleted Genres</a></li>
                                     <li><a class="dropdown-item" asp-controller="Review" asp-action="DeletedReviews">Deleted Reviews</a></li>
@@ -72,7 +72,7 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Bienvenido, @User.Identity.Name</a>
+                                <a class="nav-link" href="#">Welcome, @User.Identity.Name</a>
                             </li>
 
                             <li class="nav-item">

@@ -59,31 +59,31 @@
 
                         <hr>
 
-                        <h5>¿Viste esta película?</h5>
+                        <h5>Watched this movie?</h5>
                         <!-- En la sección de calificación -->
                         <div class="d-grid">
                             @if (hasUserReview)
                             {
                                 <button class="btn btn-outline-success mb-2" data-bs-toggle="modal" data-bs-target="#editReviewModal">
-                                    <i class="bi bi-pencil-square"></i> Editar tu reseña
+                                    <i class="bi bi-pencil-square"></i> Edit your review
                                 </button>
-                                <form asp-action="DeleteReview" asp-controller="Movie" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar tu reseña? Esta acción no se puede deshacer.')">
+                                <form asp-action="DeleteReview" asp-controller="Movie" method="post" onsubmit="return confirm('Are you sure? This action cannot be undone.')">
                                     <input type="hidden" name="reviewId" value="@userReview.Id" />
                                     <button type="submit" class="btn btn-outline-danger w-100 mb-2">
-                                        <i class="bi bi-trash"></i> Eliminar reseña
+                                        <i class="bi bi-trash"></i> Delete Review
                                     </button>
                                 </form>
                             }
                             else if (isAuthenticated)
                             {
                                 <button class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#rateModal">
-                                    <i class="bi bi-star-fill"></i> Calificar esta película
+                                    <i class="bi bi-star-fill"></i> Rate This Movie
                                 </button>
                             }
                             else
                             {
                                 <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Movie", new { id = Model.Movie.Id })" class="btn btn-outline-primary mb-2">
-                                    <i class="bi bi-star-fill"></i> Inicia sesión para calificar
+                                    <i class="bi bi-star-fill"></i> Login to Rate
                                 </a>
                             }
                         </div>
@@ -97,13 +97,13 @@
                 <p class="text-muted">@Model.Movie.ReleaseYear</p>
 
                 <div class="mb-4">
-                    <h4>Sinopsis</h4>
+                    <h4>Synopsis</h4>
                     <p>@Model.Movie.Description</p>
                 </div>
 
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <h4>Géneros</h4>
+                        <h4>Genres</h4>
                         <p>
                             @if (Model.Movie.GenreNames != null && Model.Movie.GenreNames.Any())
                             {
@@ -111,12 +111,12 @@
                             }
                             else
                             {
-                                <span>Sin información de géneros</span>
+                                <span>No genre information</span>
                             }
                         </p>
                     </div>
                     <div class="col-md-6">
-                        <h4>Año de estreno</h4>
+                        <h4>Release Year</h4>
                         <p>@Model.Movie.ReleaseYear</p>
                     </div>
                 </div>
@@ -172,15 +172,15 @@
                                                                         data-movie-id="@Model.Movie.Id"
                                                                         data-bs-toggle="modal"
                                                                         data-bs-target="#editAnyReviewModal">
-                                                                    <i class="bi bi-pencil"></i> Editar
+                                                                    <i class="bi bi-pencil"></i> Edit
                                                                 </button>
                                                             </li>
                                                         }
                                                         <li>
-                                                            <form asp-action="DeleteReview" asp-controller="Movie" method="post" class="d-inline m-0 p-0" onsubmit="return confirm('¿Estás seguro de eliminar esta reseña?')">
+                                                            <form asp-action="DeleteReview" asp-controller="Movie" method="post" class="d-inline m-0 p-0" onsubmit="return confirm('¿Are you sure to delete this review?')">
                                                                 <input type="hidden" name="reviewId" value="@review.Id" />
                                                                 <button type="submit" class="dropdown-item text-danger">
-                                                                    <i class="bi bi-trash"></i> Eliminar
+                                                                    <i class="bi bi-trash"></i> Delete
                                                                 </button>
                                                             </form>
                                                         </li>
@@ -198,7 +198,7 @@
                     else
                     {
                         <div class="alert alert-info">
-                            <p>No hay reseñas disponibles. ¡Sé el primero en opinar sobre esta película!</p>
+                            <p>No Reviews Available. Be the first one to make a review!</p>
                         </div>
                     }
                 </div>
@@ -222,29 +222,29 @@
                             <input type="hidden" name="UserId" value="@userId" />
 
                             <div class="mb-3">
-                                <label for="Rating" class="form-label">Calificación</label>
+                                <label for="Rating" class="form-label">Rating</label>
                                 <select id="Rating" name="Rating" class="form-select">
-                                    <option value="10">10 - Obra maestra</option>
-                                    <option value="9">9 - Excelente</option>
-                                    <option value="8">8 - Muy buena</option>
-                                    <option value="7">7 - Buena</option>
-                                    <option value="6">6 - Aceptable</option>
-                                    <option value="5">5 - Regular</option>
-                                    <option value="4">4 - Mala</option>
-                                    <option value="3">3 - Muy mala</option>
+                                    <option value="10">10 - Masterpiece</option>
+                                    <option value="9">9 - Excelent</option>
+                                    <option value="8">8 - Very Good</option>
+                                    <option value="7">7 - Good</option>
+                                    <option value="6">6 - Fine</option>
+                                    <option value="5">5 - Average</option>
+                                    <option value="4">4 - Bad</option>
+                                    <option value="3">3 - Very Bad</option>
                                     <option value="2">2 - Horrible</option>
-                                    <option value="1">1 - Pésima</option>
+                                    <option value="1">1 - Appaling</option>
                                 </select>
                             </div>
 
                             <div class="mb-3">
                                 <label for="Comment" class="form-label">Comentario</label>
-                                <textarea id="Comment" name="Comment" class="form-control" rows="4" placeholder="Comparte tu opinión sobre esta película..." required minlength="5"></textarea>
+                                <textarea id="Comment" name="Comment" class="form-control" rows="4" placeholder="Share your review of this movie..." required minlength="5"></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Publicar reseña</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Publish review</button>
                         </div>
                     </form>
                 </div>
@@ -259,7 +259,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editReviewModalLabel">Editar reseña de @Model.Movie.Title</h5>
+                        <h5 class="modal-title" id="editReviewModalLabel">Edita review of @Model.Movie.Title</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form asp-action="UpdateReview" asp-controller="Movie" method="post">
@@ -269,20 +269,20 @@
                             <input type="hidden" name="userId" value="@userId" />
 
                             <div class="mb-3">
-                                <label for="rating" class="form-label">Calificación</label>
+                                <label for="rating" class="form-label">Rating</label>
                                 <select id="rating" name="rating" class="form-select">
                                     @{
                                         var ratings = new[] {
-                            (10, "Obra maestra"),
-                            (9, "Excelente"),
-                            (8, "Muy buena"),
-                            (7, "Buena"),
-                            (6, "Aceptable"),
-                            (5, "Regular"),
-                            (4, "Mala"),
-                            (3, "Muy mala"),
+                            (10, "Masterpiece"),
+                            (9, "Excelent"),
+                            (8, "Very Good"),
+                            (7, "Good"),
+                            (6, "Fine"),
+                            (5, "Average"),
+                            (4, "Bad"),
+                            (3, "Very Bad"),
                             (2, "Horrible"),
-                            (1, "Pésima")
+                            (1, "Appaling")
                             };
 
                                         foreach (var (value, description) in ratings)
@@ -302,13 +302,13 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="comment" class="form-label">Comentario</label>
+                                <label for="comment" class="form-label">Comment</label>
                                 <textarea id="comment" name="comment" class="form-control" rows="4" required minlength="5">@userReview.Comment</textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Actualizar reseña</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Review</button>
                         </div>
                     </form>
                 </div>
@@ -323,7 +323,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editAnyReviewModalLabel">Editar reseña</h5>
+                        <h5 class="modal-title" id="editAnyReviewModalLabel">Edit review</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form asp-action="UpdateReview" asp-controller="Movie" method="post" id="editAnyReviewForm">
@@ -332,29 +332,29 @@
                             <input type="hidden" id="adminEditMovieId" name="movieId" value="@Model.Movie.Id" />
 
                             <div class="mb-3">
-                                <label for="adminEditRating" class="form-label">Calificación</label>
+                                <label for="adminEditRating" class="form-label">Rating</label>
                                 <select id="adminEditRating" name="rating" class="form-select">
-                                    <option value="10">10 - Obra maestra</option>
-                                    <option value="9">9 - Excelente</option>
-                                    <option value="8">8 - Muy buena</option>
-                                    <option value="7">7 - Buena</option>
-                                    <option value="6">6 - Aceptable</option>
-                                    <option value="5">5 - Regular</option>
-                                    <option value="4">4 - Mala</option>
-                                    <option value="3">3 - Muy mala</option>
+                                    <option value="10">10 - Masterpiece</option>
+                                    <option value="9">9 - Excelent</option>
+                                    <option value="8">8 - Very Good</option>
+                                    <option value="7">7 - Good</option>
+                                    <option value="6">6 - Fine</option>
+                                    <option value="5">5 - Average</option>
+                                    <option value="4">4 - Bad</option>
+                                    <option value="3">3 - Very Bad</option>
                                     <option value="2">2 - Horrible</option>
-                                    <option value="1">1 - Pésima</option>
+                                    <option value="1">1 - Appaling</option>
                                 </select>
                             </div>
 
                             <div class="mb-3">
-                                <label for="adminEditComment" class="form-label">Comentario</label>
+                                <label for="adminEditComment" class="form-label">Comment</label>
                                 <textarea id="adminEditComment" name="comment" class="form-control" rows="4" required minlength="5"></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Actualizar reseña</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Review</button>
                         </div>
                     </form>
                 </div>
@@ -366,9 +366,9 @@ else
 {
     <div class="container mt-5">
         <div class="alert alert-warning">
-            <h4>Película no encontrada</h4>
-            <p>Lo sentimos, no pudimos encontrar la película solicitada.</p>
-            <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-2">Volver al inicio</a>
+            <h4>Movie not found</h4>
+            <p>We are sorry we could not find the movie requested.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-2">Return Home</a>
         </div>
     </div>
 }

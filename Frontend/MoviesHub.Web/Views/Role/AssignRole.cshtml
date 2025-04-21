@@ -11,7 +11,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h2 class="text-center">Usuarios y sus roles</h2>
+                    <h2 class="text-center">Users and roles</h2>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -19,8 +19,8 @@
                             <thead class="bg-dark text-white">
                                 <tr>
                                     <th>Email</th>
-                                    <th>Nombre</th>
-                                    <th>Apellido</th>
+                                    <th>FirstName</th>
+                                    <th>LastName</th>
                                     <th>Roles</th>
                                 </tr>
                             </thead>
@@ -41,7 +41,7 @@
                                             }
                                             else
                                             {
-                                                <span class="text-muted">Sin roles asignados</span>
+                                                <span class="text-muted">No roles assigned</span>
                                             }
                                         </td>
                                     </tr>
@@ -58,20 +58,20 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h2 class="text-center">Asignar Rol a Usuario</h2>
+                    <h2 class="text-center">Asignar rol to user</h2>
                 </div>
                 <div class="card-body">
                     <form method="post" class="mb-3">
                         <div class="row">
                             <div class="col-12 col-md-6 offset-md-3 pb-2">
-                                <label asp-for="Email" class="form-label">Email del Usuario</label>
+                                <label asp-for="Email" class="form-label">User Email</label>
                                 <input asp-for="Email" class="form-control" placeholder="Email..." />
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
                             <div class="col-12 col-md-6 offset-md-3 pb-2">
                                 <label asp-for="Role" class="form-label">Rol</label>
                                 <select asp-for="Role" class="form-select">
-                                    <option value="" disabled selected>--Seleccionar Rol--</option>
+                                    <option value="" disabled selected>--Select Rol--</option>
                                     <option value="@SD.RoleAdmin">@SD.RoleAdmin</option>
                                     <option value="@SD.RoleManager">@SD.RoleManager</option>
                                     <option value="@SD.RoleUser">@SD.RoleUser</option>
@@ -79,7 +79,7 @@
                                 <span asp-validation-for="Role" class="text-danger"></span>
                             </div>
                             <div class="col-12 col-md-6 offset-md-3 pb-2">
-                                <button type="submit" class="form-control btn btn-primary" value="Submit">Asignar Rol</button>
+                                <button type="submit" class="form-control btn btn-primary" value="Submit">Assign Rol</button>
                             </div>
                         </div>
                     </form>
