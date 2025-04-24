@@ -153,6 +153,32 @@ namespace MoviesHub.Services.AuthAPI.Controllers
         {
             try
             {
+                // Los logs de depuración pueden mantenerse para verificación
+                var authHeader = Request.Headers["Authorization"].ToString();
+                Console.WriteLine($"==== HEADERS RECIBIDOS EN DELETEUSER ====");
+                foreach (var header in Request.Headers)
+                {
+                    Console.WriteLine($"{header.Key}: {header.Value}");
+                }
+                Console.WriteLine($"Auth header: {authHeader}");
+                Console.WriteLine($"Usuario autenticado: {User.Identity.IsAuthenticated}");
+                Console.WriteLine($"Nombre: {User.Identity.Name}");
+                Console.WriteLine($"Claims:");
+                foreach (var claim in User.Claims)
+                {
+                    Console.WriteLine($"- {claim.Type}: {claim.Value}");
+                }
+                Console.WriteLine($"Admin: {User.IsInRole("Admin")}, Manager: {User.IsInRole("Manager")}");
+                Console.WriteLine($"====================================");
+
+                // Restauramos la verificación de roles (opcional, ya que [Authorize] ya lo está haciendo)
+                if (!User.IsInRole("Admin") && !User.IsInRole("Manager"))
+                {
+                    _response.IsSuccess = false;
+                    _response.Message = "No tienes permisos para realizar esta acción";
+                    return Forbid(); // Devuelve 403 Forbidden en vez de 401
+                }
+
                 var result = await _userService.DeleteUserAsync(id, permanent);
                 if (!result)
                 {
@@ -162,19 +188,23 @@ namespace MoviesHub.Services.AuthAPI.Controllers
                 }
 
                 _response.IsSuccess = true;
-                _response.Message = permanent 
-                    ? "User permanently deleted" 
+                _response.Message = permanent
+                    ? "User permanently deleted"
                     : "User soft deleted successfully";
-                
+
                 return Ok(_response);
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
-                return BadRequest(_response);
+                return StatusCode(500, _response);
             }
         }
+
+
+
+
 
         [HttpPost("{id}/restore")]
         [Authorize(Roles = "Admin,Manager")]

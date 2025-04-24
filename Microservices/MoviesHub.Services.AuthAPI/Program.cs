@@ -8,6 +8,9 @@ using MoviesHub.Services.AuthAPI.Utility;
 using System.Net;
 using Polly;
 using Polly.Extensions.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,11 +24,82 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+//builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings"));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
+
+// Añade esto después de la configuración de Identity
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options => {
+    var jwtOptions = builder.Configuration.GetSection("ApiSettings").Get<JwtOptions>();
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
+            ValidateIssuer = true,
+            ValidIssuer = jwtOptions.Issuer,
+            ValidateAudience = true,
+            ValidAudience = jwtOptions.Audience,
+            // Añade estas opciones para ser más flexible con los claims
+            NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
+            RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        };
+//.AddJwtBearer(options =>
+//{
+//    options.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuerSigningKey = true,
+//        IssuerSigningKey = new SymmetricSecurityKey(
+//            Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("ApiSettings:Secret"))),
+//        ValidateIssuer = true,
+//        ValidIssuer = builder.Configuration.GetValue<string>("ApiSettings:Issuer"),
+//        ValidateAudience = true,
+//        ValidAudience = builder.Configuration.GetValue<string>("ApiSettings:Audience")
+//    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine($"==== TOKEN VALIDADO CORRECTAMENTE ====");
+            Console.WriteLine($"Usuario: {context.Principal?.Identity?.Name ?? "null"}");
+            Console.WriteLine($"====================================");
+            return Task.CompletedTask;
+        },
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine($"==== ERROR DE AUTENTICACIÓN JWT ====");
+            Console.WriteLine($"Error: {context.Exception.Message}");
+            Console.WriteLine($"StackTrace: {context.Exception.StackTrace}");
+            Console.WriteLine($"====================================");
+            return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            Console.WriteLine($"==== CHALLENGE DE AUTENTICACIÓN ====");
+            Console.WriteLine($"URL: {context.Request.Path}");
+            Console.WriteLine($"====================================");
+            return Task.CompletedTask;
+        },
+        OnMessageReceived = context =>
+        {
+            var token = context.Request.Headers["Authorization"].FirstOrDefault();
+            Console.WriteLine($"==== TOKEN RECIBIDO ====");
+            Console.WriteLine($"Token: {token?.Substring(0, Math.Min(20, token?.Length ?? 0)) ?? "null"}...");
+            Console.WriteLine($"====================================");
+            return Task.CompletedTask;
+        }
+    };
+});
+
 
 // 3. Servicios propios
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
