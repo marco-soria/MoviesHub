@@ -1,5 +1,6 @@
 ﻿using MoviesHub.Web.Models;
 using MoviesHub.Web.Services.IServices;
+using MoviesHub.Web.Utility;
 using static MoviesHub.Web.Utility.SD;
 
 namespace MoviesHub.Web.Services
@@ -86,5 +87,17 @@ namespace MoviesHub.Web.Services
                 Url = $"{MovieAPIBase}/api/movies/deleted"
             });
         }
+        // Implementar en MovieService.cs
+        public async Task<ResponseDto> GetMoviesWithConsistentRatingsAsync()
+        {
+            var response = await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.GET,
+                Url = SD.MovieAPIBase + "/api/movies/with-consistent-ratings"
+            });
+
+            return response;
+        }
+
     }
 }

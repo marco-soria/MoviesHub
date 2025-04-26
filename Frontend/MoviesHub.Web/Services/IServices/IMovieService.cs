@@ -13,5 +13,9 @@ namespace MoviesHub.Web.Services.IServices
         Task<ResponseDto> GetMoviesByGenreAsync(int genreId);
         Task<ResponseDto> RestoreMovieAsync(int id);
         Task<ResponseDto> GetDeletedMoviesAsync();
+
+        // Añadir al IMovieService.cs
+        Task<ResponseDto> GetMoviesWithConsistentRatingsAsync();
+
     }
 }

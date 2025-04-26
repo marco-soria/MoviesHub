@@ -221,5 +221,18 @@ namespace MoviesHub.Web.Services
             }
         }
 
+        public async Task<ResponseDto?> GetAverageRatingForMovieAsync(int movieId)
+        {
+            // Añadir un parámetro de consulta aleatorio para evitar caché
+            var timestamp = DateTime.Now.Ticks;
+
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.GET,
+                Url = SD.ReviewAPIBase + $"/api/reviews/movie/{movieId}/average?nocache={timestamp}"
+            });
+        }
+
+
     }
 }

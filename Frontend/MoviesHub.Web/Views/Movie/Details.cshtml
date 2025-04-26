@@ -22,6 +22,9 @@
     bool hasUserReview = ViewBag.UserReview != null;
     ReviewDto userReview = ViewBag.UserReview as ReviewDto;
     bool userHasDeletedReview = ViewBag.UserHasDeletedReview == true;
+
+    // Guardar el rating original para mostrar en "Average Rating" (consistente con Home)
+    decimal storedRating = Model.Movie?.AverageRating ?? 0;
 }
 
 @if (Model.Movie != null)
@@ -34,28 +37,81 @@
 
                 <div class="card mt-3">
                     <div class="card-body">
-                        <h5 class="card-title">Calificación</h5>
-                        <div class="d-flex align-items-center">
-                            <div class="rating me-2">
-                                @for (int i = 1; i <= 5; i++)
-                                {
-                                    double convertedRating = Convert.ToDouble(Model.Movie.AverageRating) / 2;
-                                    if (i <= Math.Round(convertedRating))
-                                    {
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                    }
-                                    else if (i - 0.5 <= convertedRating)
-                                    {
-                                        <i class="bi bi-star-half text-warning"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-star text-warning"></i>
-                                    }
-                                }
+                        <h5 class="card-title">Rating</h5>
+
+                        <!-- Rating calculado de las reseñas actuales (único rating que se mostrará) -->
+                        @if (Model.Reviews != null && Model.Reviews.Any())
+                        {
+                            decimal calculatedRating = (decimal)Math.Round(Model.Reviews.Average(r => r.Rating), 1);
+                            <div class="mb-3">
+                                <small class="text-muted">Average Rating (@Model.Reviews.Count reviews):</small>
+                                <div class="d-flex align-items-center">
+                                    <div class="rating me-2">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            double convertedRating = Convert.ToDouble(calculatedRating) / 2;
+                                            if (i <= Math.Round(convertedRating))
+                                            {
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            }
+                                            else if (i - 0.5 <= convertedRating)
+                                            {
+                                                <i class="bi bi-star-half text-warning"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star text-warning"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <span class="fw-bold">@calculatedRating.ToString("0.0")/10</span>
+                                </div>
                             </div>
-                            <span class="fw-bold">@Model.Movie.AverageRating.ToString("0.0")/10</span>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="mb-3">
+                                <small class="text-muted">No ratings yet</small>
+                                <div class="d-flex align-items-center">
+                                    <div class="rating me-2">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="bi bi-star text-warning"></i>
+                                        }
+                                    </div>
+                                    <span class="fw-bold">0.0/10</span>
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Rating del usuario actual (si existe) -->
+                        @if (ViewBag.UserReview != null)
+                        {
+                            <div class="mb-3">
+                                <small class="text-muted">Tu calificación:</small>
+                                <div class="d-flex align-items-center">
+                                    <div class="rating me-2">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            double convertedRating = Convert.ToDouble(ViewBag.UserReview.Rating) / 2;
+                                            if (i <= Math.Round(convertedRating))
+                                            {
+                                                <i class="bi bi-star-fill text-success"></i>
+                                            }
+                                            else if (i - 0.5 <= convertedRating)
+                                            {
+                                                <i class="bi bi-star-half text-success"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star text-success"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <span class="fw-bold">@ViewBag.UserReview.Rating/10</span>
+                                </div>
+                            </div>
+                        }
 
                         <hr>
 
@@ -89,6 +145,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- Columna para la información de la película -->
@@ -165,15 +222,13 @@
                                                         @if (review.UserId == userId || isAdmin || isManager)
                                                         {
                                                             <li>
-                                                                <button class="dropdown-item edit-review-btn"
-                                                                        data-review-id="@review.Id"
-                                                                        data-review-comment="@review.Comment"
-                                                                        data-review-rating="@review.Rating"
-                                                                        data-movie-id="@Model.Movie.Id"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#editAnyReviewModal">
+                                                                <a href="#" class="dropdown-item edit-review-btn"
+                                                                   data-review-id="@review.Id"
+                                                                   data-review-comment="@review.Comment"
+                                                                   data-review-rating="@review.Rating"
+                                                                   data-movie-id="@Model.Movie.Id">
                                                                     <i class="bi bi-pencil"></i> Edit
-                                                                </button>
+                                                                </a>
                                                             </li>
                                                         }
                                                         <li>
@@ -187,6 +242,7 @@
                                                     </ul>
                                                 </div>
                                             }
+
                                         </div>
                                     </div>
                                     <p class="card-text">@review.Comment</p>
@@ -376,18 +432,39 @@ else
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Script para cargar los datos del review en el modal de edición para admin/manager
-            $('.edit-review-btn').click(function() {
+            // Función mejorada para cargar datos en el modal cuando se hace clic en Edit
+            $('.edit-review-btn').on('click', function(event) {
+                event.preventDefault();
+
                 var reviewId = $(this).data('review-id');
                 var reviewComment = $(this).data('review-comment');
                 var reviewRating = $(this).data('review-rating');
                 var movieId = $(this).data('movie-id');
 
+                console.log("Edit clicked for review ID:", reviewId);
+
+                // Asignar valores al formulario del modal
                 $('#adminEditReviewId').val(reviewId);
                 $('#adminEditMovieId').val(movieId);
                 $('#adminEditComment').val(reviewComment);
                 $('#adminEditRating').val(reviewRating);
+
+                // Asegurar que el modal se abre correctamente
+                var myModal = new bootstrap.Modal(document.getElementById('editAnyReviewModal'));
+                myModal.show();
             });
+
+            // Asegurar que los tooltips funcionan (si los hay)
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
+            // Ver en consola si se cargaron los listeners
+            console.log("Script cargado, listeners de edit configurados en " + $('.edit-review-btn').length + " elementos");
         });
     </script>
 }
+
+}
+

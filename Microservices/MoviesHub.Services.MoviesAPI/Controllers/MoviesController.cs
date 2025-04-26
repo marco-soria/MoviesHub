@@ -87,6 +87,57 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
 
         // En MoviesController.cs del servicio MoviesAPI
 
+        //[HttpGet("{id:int}")]
+        //public async Task<ActionResult<ResponseDto>> GetMovie(int id)
+        //{
+        //    var response = new ResponseDto();
+        //    try
+        //    {
+        //        var movie = await _db.Movies
+        //            .Include(m => m.MovieGenres)
+        //            .ThenInclude(mg => mg.Genre)
+        //            .FirstOrDefaultAsync(m => m.Id == id);
+
+        //        if (movie == null)
+        //        {
+        //            _logger.LogWarning("Movie with ID: {Id} not found", id);
+        //            response.IsSuccess = false;
+        //            response.Message = $"Movie with ID: {id} not found";
+        //            return NotFound(response);
+        //        }
+
+        //        // Actualizar la calificación promedio desde ReviewsAPI
+        //        try
+        //        {
+        //            double averageRating = await _reviewService.GetAverageRatingAsync(id);
+        //            // Si el averageRating es diferente al actual, actualizar y guardar
+        //            if (Math.Abs(Convert.ToDouble(movie.AverageRating) - averageRating) > 0.001)
+        //            {
+        //                _logger.LogInformation("Updating movie {Id} average rating from {OldRating} to {NewRating}",
+        //                    id, movie.AverageRating, averageRating);
+        //                movie.AverageRating = Convert.ToDecimal(averageRating);
+        //                await _db.SaveChangesAsync();
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            // Si falla obtener el rating, solo registrar el error pero continuar
+        //            _logger.LogWarning(ex, "Failed to update average rating for movie {Id}", id);
+        //        }
+
+        //        response.Result = _mapper.Map<MovieDto>(movie);
+        //        return Ok(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error getting movie with ID: {Id}", id);
+        //        response.IsSuccess = false;
+        //        response.Message = "Error retrieving movie";
+        //        response.ErrorMessages = new List<string> { ex.Message };
+        //        return StatusCode(500, response);
+        //    }
+        //}
+        // En MoviesController.cs de MoviesAPI
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ResponseDto>> GetMovie(int id)
         {
@@ -106,26 +157,14 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                     return NotFound(response);
                 }
 
-                // Actualizar la calificación promedio desde ReviewsAPI
-                try
-                {
-                    double averageRating = await _reviewService.GetAverageRatingAsync(id);
-                    // Si el averageRating es diferente al actual, actualizar y guardar
-                    if (Math.Abs(Convert.ToDouble(movie.AverageRating) - averageRating) > 0.001)
-                    {
-                        _logger.LogInformation("Updating movie {Id} average rating from {OldRating} to {NewRating}",
-                            id, movie.AverageRating, averageRating);
-                        movie.AverageRating = Convert.ToDecimal(averageRating);
-                        await _db.SaveChangesAsync();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Si falla obtener el rating, solo registrar el error pero continuar
-                    _logger.LogWarning(ex, "Failed to update average rating for movie {Id}", id);
-                }
+                // Obtener el rating actualizado pero NO actualizar en base de datos
+                double averageRating = await _reviewService.GetAverageRatingAsync(id);
+                var movieDto = _mapper.Map<MovieDto>(movie);
 
-                response.Result = _mapper.Map<MovieDto>(movie);
+                // Solo modificar el DTO para la respuesta, no actualizar la BD
+                movieDto.AverageRating = Convert.ToDecimal(averageRating);
+
+                response.Result = movieDto;
                 return Ok(response);
             }
             catch (Exception ex)
@@ -137,6 +176,7 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                 return StatusCode(500, response);
             }
         }
+
 
 
         [HttpPost]
@@ -542,6 +582,51 @@ namespace MoviesHub.Services.MoviesAPI.Controllers
                 return StatusCode(500, response);
             }
         }
+
+        // En MoviesController.cs del microservicio MoviesAPI
+        [HttpGet("with-consistent-ratings")]
+        public async Task<ActionResult<ResponseDto>> GetMoviesWithConsistentRatings()
+        {
+            var response = new ResponseDto();
+            try
+            {
+                _logger.LogInformation("Getting all movies with consistent ratings");
+                var movies = await _db.Movies
+                    .Include(m => m.MovieGenres)
+                    .ThenInclude(mg => mg.Genre)
+                    .ToListAsync();
+
+                // Transformar a DTOs
+                var movieDtos = _mapper.Map<List<MovieDto>>(movies);
+
+                // Para cada película, obtener el rating actualizado
+                foreach (var movie in movieDtos)
+                {
+                    try
+                    {
+                        double rating = await _reviewService.GetAverageRatingAsync(movie.Id);
+                        movie.AverageRating = (decimal)rating;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to get rating for movie {MovieId}, using stored value", movie.Id);
+                        // Mantenemos el rating actual en caso de error
+                    }
+                }
+
+                response.Result = movieDtos;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting movies with consistent ratings");
+                response.IsSuccess = false;
+                response.Message = "Error retrieving movies";
+                response.ErrorMessages = new List<string> { ex.Message };
+                return StatusCode(500, response);
+            }
+        }
+
 
     }
 }

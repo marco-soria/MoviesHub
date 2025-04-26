@@ -19,5 +19,8 @@ namespace MoviesHub.Web.Services.IServices
         // Métodos para soft delete
         Task<ResponseDto> RestoreReviewAsync(int id);
         Task<ResponseDto> GetDeletedReviewsAsync();
+
+        Task<ResponseDto?> GetAverageRatingForMovieAsync(int movieId);
+
     }
 }
