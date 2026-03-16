@@ -19,6 +19,6 @@
         public const string RoleUser = "User";
         public const string RoleManager = "Manager";
 
-        public const string TokenCookie = "JwtToken";
+        public const string TokenCookie = "NuevoToken";
     }
 }

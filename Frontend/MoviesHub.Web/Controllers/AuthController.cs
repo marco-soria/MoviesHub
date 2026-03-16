@@ -395,6 +395,12 @@ namespace MoviesHub.Web.Controllers
                     identity.AddClaim(new Claim(JwtRegisteredClaimNames.Name, nameClaim.Value));
                 }
 
+                var phoneClaim = jwt.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.PhoneNumber);
+                if (phoneClaim != null)
+                {
+                    identity.AddClaim(new Claim(JwtRegisteredClaimNames.Name, phoneClaim.Value));
+                }
+
                 // FirstName y LastName
                 var firstNameClaim = jwt.Claims.FirstOrDefault(x => x.Type == "firstName");
                 if (firstNameClaim != null)

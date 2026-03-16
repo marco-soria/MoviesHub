@@ -24,6 +24,8 @@ namespace MoviesHub.Services.AuthAPI.Services
                 new Claim(JwtRegisteredClaimNames.Email, applicationUser.Email),
                 new Claim(JwtRegisteredClaimNames.Sub, applicationUser.Id),
                 new Claim(JwtRegisteredClaimNames.Name, applicationUser.UserName),
+                new Claim(JwtRegisteredClaimNames.PhoneNumber, applicationUser.PhoneNumber ?? string.Empty),
+
                 new Claim("firstName", applicationUser.FirstName),
                 new Claim("lastName", applicationUser.LastName)
             };
